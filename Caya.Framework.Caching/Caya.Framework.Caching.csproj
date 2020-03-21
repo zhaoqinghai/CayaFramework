@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CSRedisCore" Version="3.4.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Caya.Framework.Configuration\Caya.Framework.Configuration.csproj" />
+    <ProjectReference Include="..\Caya.Framework.Core\Caya.Framework.Core.csproj" />
+  </ItemGroup>
+
+</Project>
