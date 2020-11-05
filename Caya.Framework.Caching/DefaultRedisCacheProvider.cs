@@ -7,7 +7,7 @@ namespace Caya.Framework.Caching
 {
     public class DefaultRedisCacheProvider : IRedisCacheProvider
     {
-        private RedisManager _manager;
+        private readonly RedisManager _manager;
         public DefaultRedisCacheProvider(RedisManager manager)
         {
             _manager = manager;

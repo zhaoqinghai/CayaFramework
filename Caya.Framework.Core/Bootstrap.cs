@@ -36,10 +36,5 @@ namespace Caya.Framework.Core
                 module.OnConfigureAppLifetime(appLifetime);
             }
         }
-
-        //public static void Load(this IWebHostBuilder webHostBuilder)
-        //{
-        //    webHostBuilder.ConfigureServices(services => services.AddModules()).Configure(app => app.UseModules());
-        //}
     }
 }

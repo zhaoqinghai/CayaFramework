@@ -8,6 +8,7 @@ using EFCore.BulkExtensions;
 using System.Linq;
 using System.Data.Common;
 using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace Caya.Framework.EntityFramework
 {
@@ -201,6 +202,64 @@ namespace Caya.Framework.EntityFramework
         public void ExecuteSql(string sql, IEnumerable<object> @params)
         {
             _dbContext.Database.ExecuteSqlRaw(sql, @params);
+        }
+
+        public IEnumerable<T> QuerySql<T>(string sql, IEnumerable<SqlParameter> @params, TimeSpan timeout)
+        {
+            using var connection = _dbContext.Database.GetDbConnection();
+            connection.Open();
+            var command = connection.CreateCommand();
+            var seconds = Convert.ToInt32(timeout.TotalSeconds);
+            if (seconds > 0)
+            {
+                command.CommandTimeout = seconds;
+            }
+
+            command.CommandText = sql;
+            command.Parameters.AddRange(@params.ToArray());
+
+            using var reader = command.ExecuteReader();
+            var dt = reader.GetSchemaTable();
+            var columns = dt!.Columns.Cast<DataColumn>().ToArray();
+            var dict = new Dictionary<string, object>();
+            foreach (var dr in dt.Rows.Cast<DataRow>())
+            {
+                for (int i = 0; i < dr.ItemArray.Length; i++)
+                {
+                    dict[columns[i].ColumnName] = dr[i];
+                }
+
+                yield return FastDataReaderRowConvert.Convert<T>(dict);
+            }
+        }
+
+        public async IAsyncEnumerable<T> QuerySqlAsync<T>(string sql, IEnumerable<SqlParameter> @params, TimeSpan timeout)
+        {
+            await using var connection = _dbContext.Database.GetDbConnection();
+            await connection.OpenAsync();
+            var command = connection.CreateCommand();
+            var seconds = Convert.ToInt32(timeout.TotalSeconds);
+            if (seconds > 0)
+            {
+                command.CommandTimeout = seconds;
+            }
+
+            command.CommandText = sql;
+            command.Parameters.AddRange(@params.ToArray());
+
+            await using var reader = await command.ExecuteReaderAsync();
+            var dt = reader.GetSchemaTable();
+            var columns = dt!.Columns.Cast<DataColumn>().ToArray();
+            var dict = new Dictionary<string, object>();
+            foreach (var dr in dt.Rows.Cast<DataRow>())
+            {
+                for (int i = 0; i < dr.ItemArray.Length; i++)
+                {
+                    dict[columns[i].ColumnName] = dr[i];
+                }
+
+                yield return FastDataReaderRowConvert.Convert<T>(dict);
+            }
         }
 
         public void Dispose()

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Serilog.Sinks.Kafka;
 
 namespace Caya.Framework.Logging
 {
@@ -25,15 +26,11 @@ namespace Caya.Framework.Logging
 
         public void OnConfigure(IApplicationBuilder app)
         {
-            app.UseRequestLogging();
         }
 
         public void OnConfigureAppLifetime(IHostApplicationLifetime applicationLifetime)
         {
-            applicationLifetime.ApplicationStopping.Register(() => 
-            {
-                Log.CloseAndFlush();
-            });
+            applicationLifetime.ApplicationStopping.Register(Log.CloseAndFlush);
         }
 
         public void OnConfigureServices(IServiceCollection services)
@@ -49,13 +46,6 @@ namespace Caya.Framework.Logging
 
             appConfig.LoggingConfig.Mongo?.ForEach(item => GetConfiguration(ref configuration, item));
 
-            configuration
-                .WriteTo.Logger(lc => lc
-                .Filter.ByIncludingOnly(loggerEvent =>
-                {
-                    return loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(typeof(RequestLoggingMiddleware).FullName.AsSpan());
-                })
-                .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss}-{Level:u}] {Message:l}{NewLine}{Exception}"));
             appConfig.LoggingConfig.Filter.ForEach(item =>
             {
                 if (string.IsNullOrEmpty(item.Namespace))
@@ -71,7 +61,7 @@ namespace Caya.Framework.Logging
 
             Log.Logger = configuration.CreateLogger();
 
-            services.AddSingleton<ILoggerFactory>(services => new SerilogLoggerFactory(Log.Logger, true));
+            services.AddSingleton<ILoggerFactory>(serviceProvider => new SerilogLoggerFactory(Log.Logger, true));
         }
 
         public void GetConfiguration(ref LoggerConfiguration loggerConfiguration, LoggingBase config)
@@ -107,7 +97,7 @@ namespace Caya.Framework.Logging
                             return loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
                         }
                     })
-                    .WriteTo.File(fileConfig.FileName, rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true, fileSizeLimitBytes: fileConfig.LimitByteSize));
+                    .WriteTo.File(fileConfig!.FileName, rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true, fileSizeLimitBytes: fileConfig.LimitByteSize));
                     return;
                 case LoggingSink.Mongo:
                     var mongoConfig = config as MongoLogging;
@@ -123,7 +113,49 @@ namespace Caya.Framework.Logging
                             return loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
                         }
                     })
-                    .WriteTo.MongoDB(mongoConfig.Connection, mongoConfig.CollectionName));
+                    .WriteTo.MongoDB(mongoConfig!.Connection, mongoConfig.CollectionName));
+                    return;
+                case LoggingSink.Kafka:
+                    var kafkaConfig = config as KafkaLogging;
+                    loggerConfiguration.WriteTo.Logger(lc => lc
+                        .Filter.ByIncludingOnly(loggerEvent =>
+                        {
+                            if (config.Level == LogLevel.None)
+                            {
+                                return loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent
+                                    .Properties["SourceContext"].ToString().AsSpan().Slice(1)
+                                    .StartsWith(config.Namespace.AsSpan());
+                            }
+                            else
+                            {
+                                return loggerEvent.Level == GetLevel(config.Level) && loggerEvent
+                                    .Properties["SourceContext"].ToString().AsSpan().Slice(1)
+                                    .StartsWith(config.Namespace.AsSpan());
+                            }
+                        })
+                        .WriteTo.Kafka(kafkaConfig!.Connection, saslUsername: kafkaConfig!.UserName, saslPassword: kafkaConfig!.Password));
+                    return;
+                case LoggingSink.ElasticSearch:
+                    var esConfig = config as ElasticSearchLogging;
+                    loggerConfiguration.WriteTo.Logger(lc => lc
+                        .Filter.ByIncludingOnly(loggerEvent =>
+                        {
+                            if (config.Level == LogLevel.None)
+                            {
+                                return loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                            }
+                            else
+                            {
+                                return loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                            }
+                        })
+                        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(esConfig!.Connection))
+                        {
+                            AutoRegisterTemplate = true,
+                            AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+                            TypeName = esConfig.TypeName,
+                            IndexFormat = esConfig.IndexFormat
+                        }));
                     return;
             }
         }

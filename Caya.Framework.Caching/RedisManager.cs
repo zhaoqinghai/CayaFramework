@@ -10,16 +10,9 @@ namespace Caya.Framework.Caching
 {
     public class RedisManager
     {
-        private Dictionary<string, CSRedisClient> _dict = new Dictionary<string, CSRedisClient>();
+        private readonly Dictionary<string, CSRedisClient> _dict = new Dictionary<string, CSRedisClient>();
 
-        public CSRedisClient GetRedisClient(string key)
-        {
-            if (_dict.ContainsKey(key))
-            {
-                return _dict[key];
-            }
-            return null;
-        }
+        public CSRedisClient GetRedisClient(string key) => _dict.ContainsKey(key) ? _dict[key] : null;
 
         public void Dispose()
         {

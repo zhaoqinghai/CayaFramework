@@ -13,6 +13,10 @@ namespace Caya.Framework.Configuration
 
         public List<MongoLogging> Mongo { get; set; } = new List<MongoLogging>();
 
+        public List<ElasticSearchLogging> ElasticSearch { get; set; } = new List<ElasticSearchLogging>();
+
+        public List<KafkaLogging> Kafka { get; set; } = new List<KafkaLogging>();
+
         public List<LogFilter> Filter { get; set; } = new List<LogFilter>();
     }
 
@@ -59,10 +63,34 @@ namespace Caya.Framework.Configuration
         public override LoggingSink Sink => LoggingSink.Mongo;
     }
 
+    public class KafkaLogging : LoggingBase
+    {
+        public string Connection { get; set; }
+
+        public string UserName { get; set; }
+
+        public string Password { get; set; }
+
+        public override LoggingSink Sink => LoggingSink.Kafka;
+    }
+
+    public class ElasticSearchLogging : LoggingBase
+    {
+        public string Connection { get; set; }
+
+        public string IndexFormat { get; set; }
+
+        public string TypeName { get; set; }
+
+        public override LoggingSink Sink => LoggingSink.ElasticSearch;
+    }
+
     public enum LoggingSink
     {
         Console,
         File,
-        Mongo
+        Mongo,
+        ElasticSearch,
+        Kafka
     }
 }

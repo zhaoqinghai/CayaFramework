@@ -9,7 +9,7 @@ namespace Caya.Framework.EntityFramework
     {
         public bool Equals([AllowNull] DbOption x, [AllowNull] DbOption y)
         {
-            if(x.Kind == y.Kind && x.State == y.State && x.ConnectionStr == y.ConnectionStr)
+            if(y != null && x != null && x.Kind == y.Kind && x.State == y.State && x.ConnectionStr == y.ConnectionStr)
             {
                 return true;
             }

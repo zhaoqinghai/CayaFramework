@@ -14,7 +14,7 @@ namespace Caya.Framework.EntityFramework
     {
         private Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbOption>>> _dict = new Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbOption>>>();
 
-        private DatabaseCluster _cluster;
+        private readonly DatabaseCluster _cluster;
         internal RepositoryOptions(DatabaseCluster cluster)
         {
             _cluster = cluster;
@@ -25,7 +25,7 @@ namespace Caya.Framework.EntityFramework
             return _dict;
         }
 
-        public void AddDbcontext<TDbContext>(string dbName) where TDbContext : DbContext
+        public void AddDbContext<TDbContext>(string dbName) where TDbContext : DbContext
         {
             var dbOptions = _cluster.Configs.Where(item => item.DbName == dbName).Select(item => new DbOption()
             {

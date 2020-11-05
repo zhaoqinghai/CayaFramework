@@ -32,10 +32,7 @@ namespace Caya.Framework.Mvc
                 .AddDataAnnotations()
                 .ConfigureApiBehaviorOptions(options =>
                 {
-                    options.InvalidModelStateResponseFactory = (context) =>
-                    {
-                        return new BadRequestObjectResult(context.ModelState);
-                    };
+                    options.InvalidModelStateResponseFactory = (context) => new BadRequestObjectResult(context.ModelState);
                 })
                 .AddJsonOptions(options =>
                 {

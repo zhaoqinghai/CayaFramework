@@ -41,7 +41,7 @@ namespace Caya.Framework.EntityFramework
             return count;
         }
 
-        public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             int count = await base.SaveChangesAsync(cancellationToken);
             Detach();

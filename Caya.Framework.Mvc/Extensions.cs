@@ -29,10 +29,7 @@ namespace Caya.Framework.Mvc
 
         public static void AddJsonOptions(this IServiceCollection services, Action<JsonOptions> action)
         {
-            services.Configure<JsonOptions>(options =>
-            {
-                action(options);
-            });
+            services.Configure<JsonOptions>(action);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Caya.Framework.EntityFramework
             var appConfig = provider.GetService<IOptions<AppConfigOption>>().Value;
             var options = new RepositoryOptions(appConfig.DatabaseCluster);
             action(options);
-            services.AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>(provider => new DefaultRepositoryFactory(options, provider.GetService<ILoggerFactory>()));
+            services.AddSingleton<IRepositoryFactory, DefaultRepositoryFactory>(serviceProvider => new DefaultRepositoryFactory(options, serviceProvider.GetService<ILoggerFactory>()));
         }
     }
 }

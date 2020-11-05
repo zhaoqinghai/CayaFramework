@@ -13,7 +13,7 @@ namespace Caya.Framework.Dapper
 {
     public class DefaultDbConnectionFactory : IDbConnectionFactory
     {
-        private Dictionary<string, IReadOnlyList<DbOption>> _dict = new Dictionary<string, IReadOnlyList<DbOption>>();
+        private readonly Dictionary<string, IReadOnlyList<DbOption>> _dict = new Dictionary<string, IReadOnlyList<DbOption>>();
         public IDbConnection CreateReadDbConnection(string key)
         {
             if (!_dict.ContainsKey(key))

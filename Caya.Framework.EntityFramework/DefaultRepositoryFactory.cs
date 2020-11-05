@@ -15,25 +15,25 @@ namespace Caya.Framework.EntityFramework
 {
     internal class DefaultRepositoryFactory: IRepositoryFactory
     {
-        private Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbOption>>> _dict = new Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbOption>>>();
+        private readonly Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbOption>>> _dict;
 
-        private ConcurrentDictionary<Type, Func<DbContextOptions, ILoggerFactory, object>> _typeFuncDict = new ConcurrentDictionary<Type, Func<DbContextOptions, ILoggerFactory, object>>();
+        private readonly ConcurrentDictionary<Type, Func<DbContextOptions, ILoggerFactory, object>> _typeFuncDict = new ConcurrentDictionary<Type, Func<DbContextOptions, ILoggerFactory, object>>();
 
         private ILoggerFactory _loggerFactory;
 
         public CayaRepositroy<TDbContext> CreateReadRepo<TDbContext>() where TDbContext : CayaDbContext
         {
             var reflectorFunc = _typeFuncDict.GetOrAdd(typeof(TDbContext), type => {
-                var optionsParamter = Expression.Parameter(typeof(DbContextOptions), "options");
-                var loggerFactoryParamter = Expression.Parameter(typeof(ILoggerFactory), "loggerFactory");
-                Expression newExpression = Expression.New(typeof(TDbContext).GetTypeInfo().GetConstructor(new Type[2] { typeof(DbContextOptions), typeof(ILoggerFactory) }), optionsParamter, loggerFactoryParamter);
-                return Expression.Lambda<Func<DbContextOptions, ILoggerFactory, object>>(newExpression, optionsParamter, loggerFactoryParamter).Compile();
+                var optionsParameter = Expression.Parameter(typeof(DbContextOptions), "options");
+                var parameter = Expression.Parameter(typeof(ILoggerFactory), "loggerFactory");
+                Expression newExpression = Expression.New(typeof(TDbContext).GetTypeInfo().GetConstructor(new Type[2] { typeof(DbContextOptions), typeof(ILoggerFactory) }), optionsParameter, parameter);
+                return Expression.Lambda<Func<DbContextOptions, ILoggerFactory, object>>(newExpression, optionsParameter, parameter).Compile();
             });
 
 
             if (!_dict.ContainsKey(typeof(TDbContext)))
             {
-                throw new InvalidOperationException("没有添加dbcontext到容器中");
+                throw new InvalidOperationException("没有添加DbContext到容器中");
             }
             var optionArray = _dict[typeof(TDbContext)][DbState.Read].ToArray();
             var random = new Random().Next(optionArray.Count());
@@ -54,10 +54,10 @@ namespace Caya.Framework.EntityFramework
         public CayaRepositroy<TDbContext> CreateWriteRepo<TDbContext>() where TDbContext : CayaDbContext
         {
             var reflectorFunc = _typeFuncDict.GetOrAdd(typeof(TDbContext), type => {
-                var optionsParamter = Expression.Parameter(typeof(DbContextOptions), "options");
-                var loggerFactoryParamter = Expression.Parameter(typeof(ILoggerFactory), "loggerFactory");
-                Expression newExpression = Expression.New(typeof(TDbContext).GetTypeInfo().GetConstructor(new Type[2] { typeof(DbContextOptions), typeof(ILoggerFactory) }), optionsParamter, loggerFactoryParamter);
-                return Expression.Lambda<Func<DbContextOptions, ILoggerFactory, object>>(newExpression, optionsParamter, loggerFactoryParamter).Compile();
+                var optionsParameter = Expression.Parameter(typeof(DbContextOptions), "options");
+                var loggerFactoryParameter = Expression.Parameter(typeof(ILoggerFactory), "loggerFactory");
+                Expression newExpression = Expression.New(typeof(TDbContext).GetTypeInfo().GetConstructor(new Type[2] { typeof(DbContextOptions), typeof(ILoggerFactory) }), optionsParameter, loggerFactoryParameter);
+                return Expression.Lambda<Func<DbContextOptions, ILoggerFactory, object>>(newExpression, optionsParameter, loggerFactoryParameter).Compile();
             });
             if (!_dict.ContainsKey(typeof(TDbContext)))
             {

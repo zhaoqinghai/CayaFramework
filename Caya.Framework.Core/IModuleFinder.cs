@@ -11,18 +11,18 @@ namespace Caya.Framework.Core
     {
         public static IReadOnlyList<IModule> GetModules()
         {
-            var moduleType = Assembly.GetEntryAssembly().GetTypes().Where(item => typeof(IModule).IsAssignableFrom(item)).FirstOrDefault();
+            var moduleType = Assembly.GetEntryAssembly()?.GetTypes().FirstOrDefault(item => typeof(IModule).IsAssignableFrom(item));
             var array = Array.Empty<Type>();
             GetModules<IModule>(moduleType, ref array);
             return array.Select(item => Activator.CreateInstance(item) as IModule).ToImmutableList();
         }
 
-        private static void GetDependancyModules(Type moduleType, ref Type[] array)
+        private static void GetDependencyModules(Type moduleType, ref Type[] array)
         {
             var types = moduleType.GetCustomAttribute<DependsOnAttribute>()?.TypeCollection ?? Array.Empty<Type>();
             foreach(var type in types)
             {
-                GetDependancyModules(type, ref array);
+                GetDependencyModules(type, ref array);
             }
             if (!array.Contains(moduleType) && typeof(IModule).IsAssignableFrom(moduleType))
             {
@@ -32,18 +32,18 @@ namespace Caya.Framework.Core
 
         public static IReadOnlyList<IMiddlewareModule> GetMiddlewareModules()
         {
-            var moduleType = Assembly.GetEntryAssembly().GetTypes().Where(item => typeof(IModule).IsAssignableFrom(item)).FirstOrDefault();
+            var moduleType = Assembly.GetEntryAssembly()?.GetTypes().FirstOrDefault(item => typeof(IModule).IsAssignableFrom(item));
             var array = Array.Empty<Type>();
             GetModules<IMiddlewareModule>(moduleType, ref array);
             return array.Select(item => Activator.CreateInstance(item) as IMiddlewareModule).OrderBy(item => item.Order).ToImmutableList();
         }
 
-        private static void GetDependancyMiddlewareModules(Type moduleType, ref Type[] array)
+        private static void GetDependencyMiddlewareModules(Type moduleType, ref Type[] array)
         {
             var types = moduleType.GetCustomAttribute<DependsOnAttribute>()?.TypeCollection ?? Array.Empty<Type>();
             foreach (var type in types)
             {
-                GetDependancyMiddlewareModules(type, ref array);
+                GetDependencyMiddlewareModules(type, ref array);
             }
             if (!array.Contains(moduleType) && typeof(IMiddlewareModule).IsAssignableFrom(moduleType))
             {
@@ -53,7 +53,7 @@ namespace Caya.Framework.Core
 
         public static IReadOnlyList<ILifeTimeModule> GetAppLifetimeModules()
         {
-            var moduleType = Assembly.GetEntryAssembly().GetTypes().Where(item => typeof(IModule).IsAssignableFrom(item)).FirstOrDefault();
+            var moduleType = Assembly.GetEntryAssembly()?.GetTypes().FirstOrDefault(item => typeof(IModule).IsAssignableFrom(item));
             var array = Array.Empty<Type>();
             GetModules<ILifeTimeModule>(moduleType, ref array);
             return array.Select(item => Activator.CreateInstance(item) as ILifeTimeModule).ToImmutableList();

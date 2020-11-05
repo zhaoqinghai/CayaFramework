@@ -10,7 +10,7 @@ namespace Caya.Framework.Core
     {
         public DependsOnAttribute(params Type[] types)
         {
-            TypeCollection = types.Where(type => typeof(IModule).IsAssignableFrom(type)).ToArray() ?? new Type[0];
+            TypeCollection = types.Where(type => typeof(IModule).IsAssignableFrom(type)).ToArray();
         }
 
         public Type[] TypeCollection { get; set; }
