@@ -8,5 +8,7 @@ namespace Caya.Framework.Caching
     public interface IRedisCacheProvider
     {
         CSRedisClient GetRedisCache(string name);
+
+        CSRedisClient Default { get; }
     }
 }

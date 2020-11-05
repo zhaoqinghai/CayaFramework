@@ -20,13 +20,9 @@ using Serilog.Sinks.Kafka;
 namespace Caya.Framework.Logging
 {
     [DependsOn(typeof(ConfiguratonModule))]
-    public class LoggingModule : ILifeTimeModule, IMiddlewareModule
+    public class LoggingModule : ILifeTimeModule
     {
         public int Order => 0;
-
-        public void OnConfigure(IApplicationBuilder app)
-        {
-        }
 
         public void OnConfigureAppLifetime(IHostApplicationLifetime applicationLifetime)
         {
@@ -46,6 +42,10 @@ namespace Caya.Framework.Logging
 
             appConfig.LoggingConfig.Mongo?.ForEach(item => GetConfiguration(ref configuration, item));
 
+            appConfig.LoggingConfig.Kafka?.ForEach(item => GetConfiguration(ref configuration, item));
+
+            appConfig.LoggingConfig.ElasticSearch?.ForEach(item => GetConfiguration(ref configuration, item));
+
             appConfig.LoggingConfig.Filter.ForEach(item =>
             {
                 if (string.IsNullOrEmpty(item.Namespace))
@@ -56,7 +56,6 @@ namespace Caya.Framework.Logging
                 {
                     configuration.MinimumLevel.Override(item.Namespace, GetLevel(item.MinLevel));
                 }
-                
             });
 
             Log.Logger = configuration.CreateLogger();

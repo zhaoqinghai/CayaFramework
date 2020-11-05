@@ -17,5 +17,7 @@ namespace Caya.Framework.Caching
         {
             return _manager.GetRedisClient(name);
         }
+
+        public CSRedisClient Default => _manager.Default;
     }
 }

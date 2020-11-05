@@ -14,6 +14,8 @@ namespace Caya.Framework.Caching
 
         public CSRedisClient GetRedisClient(string key) => _dict.ContainsKey(key) ? _dict[key] : null;
 
+        public CSRedisClient Default { get; }
+
         public void Dispose()
         {
             foreach(var client in _dict.Values)
@@ -40,12 +42,14 @@ namespace Caya.Framework.Caching
                             {
                                 var client = new CSRedisClient(config.ConnectionStr);
                                 _dict.Add(config.Name, client);
+                                Default ??= client;
                             }
                             break;
                         case RedisMode.Guard:
                             {
                                 var client = new CSRedisClient(null, config.Sentinels.ToArray());
                                 _dict.Add(config.Name, client);
+                                Default ??= client;
                             }
                             break;
                     }
