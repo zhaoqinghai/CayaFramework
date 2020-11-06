@@ -7,11 +7,17 @@ namespace Caya.Framework.EventBus
 {
     public class DefaultEventBusProvider : IEventBusProvider
     {
-        public IBus GetEventBus(string name)
+        private readonly RabbitMqManager _manager;
+        public DefaultEventBusProvider(RabbitMqManager manager)
         {
-            throw new NotImplementedException();
+            _manager = manager;
         }
 
-        public IBus Default { get; }
+        public IBus GetEventBus(string name)
+        {
+            return _manager.GetBus(name);
+        }
+
+        public IBus Default => _manager.Default;
     }
 }

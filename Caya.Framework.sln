@@ -37,21 +37,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.EventBus", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Mapper", "Caya.Framework.Mapper\Caya.Framework.Mapper.csproj", "{39AACBBF-36F5-4DAD-926E-1C9B7A00A63B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Auth", "Caya.Framework.Auth\Caya.Framework.Auth.csproj", "{DC8E31BD-FC8F-4B35-A900-5ED4BD2533F0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Validate", "Caya.Framework.Validate\Caya.Framework.Validate.csproj", "{87DAC290-E39D-4B6A-9A4D-4714EE5E53FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Hangfire", "Caya.Framework.Hangfire\Caya.Framework.Hangfire.csproj", "{2012D4FD-61B8-4023-B0F3-6E72F38B5B31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caya.Framework.Swagger", "Caya.Framework.Swagger\Caya.Framework.Swagger.csproj", "{54404DA9-E686-4816-80BB-C498BEA0A7E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Swagger", "Caya.Framework.Swagger\Caya.Framework.Swagger.csproj", "{54404DA9-E686-4816-80BB-C498BEA0A7E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caya.Framework.MiniProfile", "Caya.Framework.MiniProfile\Caya.Framework.MiniProfile.csproj", "{73ABB315-6654-4277-8100-5D09EB8CEB0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.MiniProfiler", "Caya.Framework.MiniProfile\Caya.Framework.MiniProfiler.csproj", "{73ABB315-6654-4277-8100-5D09EB8CEB0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caya.Framework.Util", "Caya.Framework.Util\Caya.Framework.Util.csproj", "{57C6088C-1FF6-4E3B-A7FE-37A5D08733AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Util", "Caya.Framework.Util\Caya.Framework.Util.csproj", "{57C6088C-1FF6-4E3B-A7FE-37A5D08733AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caya.Framework.ElasticSearch", "Caya.Framework.ElasticSearch\Caya.Framework.ElasticSearch.csproj", "{30A256D6-0043-4E79-8062-0983BE61343E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.ElasticSearch", "Caya.Framework.ElasticSearch\Caya.Framework.ElasticSearch.csproj", "{30A256D6-0043-4E79-8062-0983BE61343E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caya.Framework.Mongo", "Caya.Framework.Mongo\Caya.Framework.Mongo.csproj", "{01F34AD5-83AA-4C05-9DEA-FC9B6AC76144}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Mongo", "Caya.Framework.Mongo\Caya.Framework.Mongo.csproj", "{01F34AD5-83AA-4C05-9DEA-FC9B6AC76144}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,10 +125,6 @@ Global
 		{39AACBBF-36F5-4DAD-926E-1C9B7A00A63B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39AACBBF-36F5-4DAD-926E-1C9B7A00A63B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39AACBBF-36F5-4DAD-926E-1C9B7A00A63B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC8E31BD-FC8F-4B35-A900-5ED4BD2533F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC8E31BD-FC8F-4B35-A900-5ED4BD2533F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC8E31BD-FC8F-4B35-A900-5ED4BD2533F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC8E31BD-FC8F-4B35-A900-5ED4BD2533F0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{87DAC290-E39D-4B6A-9A4D-4714EE5E53FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{87DAC290-E39D-4B6A-9A4D-4714EE5E53FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87DAC290-E39D-4B6A-9A4D-4714EE5E53FC}.Release|Any CPU.ActiveCfg = Release|Any CPU

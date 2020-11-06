@@ -11,7 +11,7 @@ namespace Caya.Framework.EventBus
     {
         private readonly Dictionary<string, IBus> _dict = new Dictionary<string, IBus>();
 
-        public IBus GetRedisClient(string key) => _dict.ContainsKey(key) ? _dict[key] : null;
+        public IBus GetBus(string key) => _dict.ContainsKey(key) ? _dict[key] : null;
 
         public IBus Default { get; }
 
