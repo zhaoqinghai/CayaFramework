@@ -36,5 +36,19 @@ namespace Caya.Framework.Mvc
         {
             return context.HttpContext.RequestServices.GetService<TService>();
         }
+
+        public static IMvcCoreBuilder AddCayaMvcCore(this IServiceCollection services)
+        {
+            return services.AddMvcCore()
+                .AddDataAnnotations()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = (context) => new BadRequestObjectResult(context.ModelState);
+                })
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+                });
+        }
     }
 }

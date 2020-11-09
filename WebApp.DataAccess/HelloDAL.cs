@@ -35,20 +35,8 @@ namespace WebApp.DataAccess
         }
         public string SayHello()
         {
-            using var connection = _connectionFactory.CreateReadDbConnection("Test0");
             using var repo = _factory.CreateReadRepo<HelloDbContext>();
             var list = new List<User>();
-            for (int i = 0; i < 50015; i++)
-            {
-                list.Add(new User()
-                {
-                    Name = $"zqh{i}",
-                    Age = 18,
-                    Id = Guid.NewGuid()
-                });
-            }
-
-            connection.BatchInsertAsync(list).GetAwaiter().GetResult();
             var name = repo.GetQuery<User>().Select(item => item.Name).FirstOrDefault();
             var a = repo.QuerySql<User>("select * from [User] where Age in @AgeList", new { AgeList = new[] { 18, 20 } }).ToList();
             return name;

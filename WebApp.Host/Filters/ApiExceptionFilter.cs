@@ -17,6 +17,7 @@ namespace WebApp.Host.Filters
             var logger = context.GetService<ILogger<ApiExceptionFilter>>();
             logger.LogInformation("123");
             logger.LogError(context.Exception, "Data {0}", new object[]{JsonConvert.SerializeObject(context.HttpContext.Items) });
+            
             return Task.CompletedTask;
         }
     }

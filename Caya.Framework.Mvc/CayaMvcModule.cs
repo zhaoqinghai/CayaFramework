@@ -28,17 +28,7 @@ namespace Caya.Framework.Mvc
 
         public void OnConfigureServices(IServiceCollection services)
         {
-            services.AddMvcCore()
-                .AddDataAnnotations()
-                .ConfigureApiBehaviorOptions(options =>
-                {
-                    options.InvalidModelStateResponseFactory = (context) => new BadRequestObjectResult(context.ModelState);
-                })
-                .AddJsonOptions(options =>
-                {
-                    //options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
-                    options.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
-                });
+            
         }
     }
 }

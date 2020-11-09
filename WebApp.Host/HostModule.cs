@@ -14,6 +14,9 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Threading.Tasks;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using WebApp.BussinessData;
 using WebApp.Host.Filters;
 using WebApp.Service;
 
@@ -24,7 +27,11 @@ namespace WebApp.Host
     {
         public void OnConfigureServices(IServiceCollection services)
         {
-            services.AddMvcFilters(new Type[] {typeof(ApiExceptionFilter)});
+            services.AddCayaMvcCore().AddFluentValidation(fv =>
+            {
+                fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                fv.RegisterValidatorsFromAssemblyContaining<HelloModel>();
+            });
         }
     }
 }
