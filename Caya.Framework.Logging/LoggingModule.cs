@@ -36,16 +36,30 @@ namespace Caya.Framework.Logging
 
             var configuration = new LoggerConfiguration();
 
-            appConfig.LoggingConfig.Console?.ForEach(item => GetConfiguration(ref configuration, item));
+            if (appConfig.LoggingConfig.Console != null && appConfig.LoggingConfig.Console.Any())
+            {
+                GetConsoleConfiguration(ref configuration, appConfig.LoggingConfig.Console);
+            }
 
-            appConfig.LoggingConfig.File?.ForEach(item => GetConfiguration(ref configuration, item));
+            if (appConfig.LoggingConfig.File != null && appConfig.LoggingConfig.File.Any())
+            {
+                GetFileConfiguration(ref configuration, appConfig.LoggingConfig.File);
+            }
 
-            appConfig.LoggingConfig.Mongo?.ForEach(item => GetConfiguration(ref configuration, item));
+            if (appConfig.LoggingConfig.Mongo != null && appConfig.LoggingConfig.Mongo.Any())
+            {
+                GetMongoDbConfiguration(ref configuration, appConfig.LoggingConfig.Mongo);
+            }
 
-            appConfig.LoggingConfig.Kafka?.ForEach(item => GetConfiguration(ref configuration, item));
+            if (appConfig.LoggingConfig.Kafka != null && appConfig.LoggingConfig.Kafka.Any())
+            {
+                GetKafkaConfiguration(ref configuration, appConfig.LoggingConfig.Kafka);
+            }
 
-            appConfig.LoggingConfig.ElasticSearch?.ForEach(item => GetConfiguration(ref configuration, item));
-
+            if (appConfig.LoggingConfig.ElasticSearch != null && appConfig.LoggingConfig.ElasticSearch.Any())
+            {
+                GetEsConfiguration(ref configuration, appConfig.LoggingConfig.ElasticSearch);
+            }
             appConfig.LoggingConfig.Filter.ForEach(item =>
             {
                 if (string.IsNullOrEmpty(item.Namespace))
@@ -63,99 +77,172 @@ namespace Caya.Framework.Logging
             services.AddSingleton<ILoggerFactory>(serviceProvider => new SerilogLoggerFactory(Log.Logger, true));
         }
 
-        public void GetConfiguration(ref LoggerConfiguration loggerConfiguration, LoggingBase config)
+        public void GetConsoleConfiguration(ref LoggerConfiguration loggerConfiguration, List<ConsoleLogging> configs)
         {
-            switch (config.Sink)
+            foreach (var loggingBases in configs.GroupBy(item => item.OutputTemplate))
             {
-                case LoggingSink.Console:
-                    loggerConfiguration.WriteTo.Logger(lc => lc
+                loggerConfiguration.WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(loggerEvent =>
                     {
-                        if(config.Level == LogLevel.None)
+                        var result = false;
+                        foreach (var config in loggingBases)
                         {
-                            return loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
-                        }
-                        else
-                        {
-                            return loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
-                        }
-                    })
-                    .WriteTo.Console(outputTemplate: config.OutputTemplate));
-                    return;
-                case LoggingSink.File:
-                    var fileConfig = config as FileLogging;
-                    loggerConfiguration.WriteTo.Logger(lc => lc
-                    .Filter.ByIncludingOnly(loggerEvent =>
-                    {
-                        if (config.Level == LogLevel.None)
-                        {
-                            return loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
-                        }
-                        else
-                        {
-                            return loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
-                        }
-                    })
-                    .WriteTo.File(fileConfig!.FileName, rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true, fileSizeLimitBytes: fileConfig.LimitByteSize));
-                    return;
-                case LoggingSink.Mongo:
-                    var mongoConfig = config as MongoLogging;
-                    loggerConfiguration.WriteTo.Logger(lc => lc
-                    .Filter.ByIncludingOnly(loggerEvent =>
-                    {
-                        if (config.Level == LogLevel.None)
-                        {
-                            return loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
-                        }
-                        else
-                        {
-                            return loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
-                        }
-                    })
-                    .WriteTo.MongoDB(mongoConfig!.Connection, mongoConfig.CollectionName));
-                    return;
-                case LoggingSink.Kafka:
-                    var kafkaConfig = config as KafkaLogging;
-                    loggerConfiguration.WriteTo.Logger(lc => lc
-                        .Filter.ByIncludingOnly(loggerEvent =>
-                        {
-                            if (config.Level == LogLevel.None)
+                            if (!result)
                             {
-                                return loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent
-                                    .Properties["SourceContext"].ToString().AsSpan().Slice(1)
-                                    .StartsWith(config.Namespace.AsSpan());
+                                if (config.Level == LogLevel.None)
+                                {
+                                    result = loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
+                                else
+                                {
+                                    result = loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
                             }
                             else
                             {
-                                return loggerEvent.Level == GetLevel(config.Level) && loggerEvent
-                                    .Properties["SourceContext"].ToString().AsSpan().Slice(1)
-                                    .StartsWith(config.Namespace.AsSpan());
+                                return true;
                             }
-                        })
-                        .WriteTo.Kafka(kafkaConfig!.Connection, saslUsername: kafkaConfig!.UserName, saslPassword: kafkaConfig!.Password));
-                    return;
-                case LoggingSink.ElasticSearch:
-                    var esConfig = config as ElasticSearchLogging;
-                    loggerConfiguration.WriteTo.Logger(lc => lc
-                        .Filter.ByIncludingOnly(loggerEvent =>
+                            
+                        }
+                        return result;
+                    })
+                    .WriteTo.Console(outputTemplate: loggingBases.Key));
+            }
+        }
+
+        public void GetFileConfiguration(ref LoggerConfiguration loggerConfiguration, List<FileLogging> configs)
+        {
+            foreach (var loggingFiles in configs.GroupBy(item => new { item.FileName, item.LimitByteSize }))
+            {
+                loggerConfiguration.WriteTo.Logger(lc => lc
+                    .Filter.ByIncludingOnly(loggerEvent =>
+                    {
+                        var result = false;
+                        foreach (var config in loggingFiles)
                         {
-                            if (config.Level == LogLevel.None)
+                            if (!result)
                             {
-                                return loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                if (config.Level == LogLevel.None)
+                                {
+                                    result = loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
+                                else
+                                {
+                                    result = loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
                             }
                             else
                             {
-                                return loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                return true;
                             }
-                        })
-                        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(esConfig!.Connection))
+                        }
+                        return result;
+                    })
+                    .WriteTo.File(loggingFiles.Key.FileName, rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true, fileSizeLimitBytes: loggingFiles.Key.LimitByteSize));
+            }
+        }
+
+        public void GetMongoDbConfiguration(ref LoggerConfiguration loggerConfiguration, List<MongoLogging> configs)
+        {
+            foreach (var loggingMongoDbs in configs
+                .GroupBy(item => new { item.Connection, item.CollectionName }))
+            {
+                loggerConfiguration.WriteTo.Logger(lc => lc
+                    .Filter.ByIncludingOnly(loggerEvent =>
+                    {
+                        var result = false;
+                        foreach (var config in loggingMongoDbs)
                         {
-                            AutoRegisterTemplate = true,
-                            AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-                            TypeName = esConfig.TypeName,
-                            IndexFormat = esConfig.IndexFormat
-                        }));
-                    return;
+                            if (!result)
+                            {
+                                if (config.Level == LogLevel.None)
+                                {
+                                    result = loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
+                                else
+                                {
+                                    result = loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
+                            }
+                            else
+                            {
+                                return true;
+                            }
+                        }
+                        return result;
+                    })
+                    .WriteTo.MongoDB(loggingMongoDbs!.Key.Connection, loggingMongoDbs!.Key.CollectionName));
+            }
+        }
+
+        public void GetKafkaConfiguration(ref LoggerConfiguration loggerConfiguration, List<KafkaLogging> configs)
+        {
+            foreach (var loggingKafkas in configs
+                .GroupBy(item => new { item.Connection, item.UserName, item.Password }))
+            {
+                loggerConfiguration.WriteTo.Logger(lc => lc
+                    .Filter.ByIncludingOnly(loggerEvent =>
+                    {
+                        var result = false;
+                        foreach (var config in loggingKafkas)
+                        {
+                            if (!result)
+                            {
+                                if (config.Level == LogLevel.None)
+                                {
+                                    result = loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
+                                else
+                                {
+                                    result = loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
+                            }
+                            else
+                            {
+                                return true;
+                            }
+                        }
+                        return result;
+                    })
+                    .WriteTo.Kafka(loggingKafkas!.Key.Connection, saslUsername: loggingKafkas!.Key.UserName, saslPassword: loggingKafkas!.Key.Password));
+            }
+        }
+
+        public void GetEsConfiguration(ref LoggerConfiguration loggerConfiguration, List<ElasticSearchLogging> configs)
+        {
+            foreach (var loggingEss in configs.GroupBy(item => new { item.Connection, item.TypeName, item.IndexFormat }))
+            {
+                loggerConfiguration.WriteTo.Logger(lc => lc
+                    .Filter.ByIncludingOnly(loggerEvent =>
+                    {
+                        var result = false;
+                        foreach (var config in loggingEss)
+                        {
+                            if (!result)
+                            {
+                                if (config.Level == LogLevel.None)
+                                {
+                                    result = loggerEvent.Level >= GetLevel(config.MinLevel) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
+                                else
+                                {
+                                    result = loggerEvent.Level == GetLevel(config.Level) && loggerEvent.Properties["SourceContext"].ToString().AsSpan().Slice(1).StartsWith(config.Namespace.AsSpan());
+                                }
+                            }
+                            else
+                            {
+                                return true;
+                            }
+                        }
+                        return result;
+                    })
+                    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(loggingEss.Key.Connection))
+                    {
+                        AutoRegisterTemplate = true,
+                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+                        TypeName = loggingEss.Key.TypeName,
+                        IndexFormat = loggingEss.Key.IndexFormat
+                    }));
             }
         }
 

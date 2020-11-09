@@ -31,5 +31,10 @@ namespace Caya.Framework.Mvc
         {
             services.Configure<JsonOptions>(action);
         }
+
+        public static TService GetService<TService>(this ActionContext context)
+        {
+            return context.HttpContext.RequestServices.GetService<TService>();
+        }
     }
 }

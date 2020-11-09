@@ -21,68 +21,141 @@ namespace Caya.Framework.Dapper
             Caching<T>();
             var table = Dict[type];
             var sb = new StringBuilder();
-            sb.Append("INSERT INTO ");
-            sb.Append(table.TableName);
-            sb.Append(" ");
-            sb.Append("(");
-            sb.Append(string.Join(',', table.Data.Keys.Select(item => $"[{item.ColumnName}]")));
-            sb.Append(") ");
-            sb.Append("VALUES");
-
-            var valueTypes = new HashSet<Type>(){typeof(int), typeof(double), typeof(decimal), typeof(bool), typeof(short), typeof(Enum)};
-            foreach (var entity in entities)
+            var enumerable = entities as T[] ?? entities.ToArray();
+            while (enumerable.Any())
             {
-                sb.Append(" (");
-                foreach (var key in table.Data.Keys)
+                var tempEntities = enumerable.Take(1000);
+                entities = enumerable.Skip(1000);
+                sb.Append("INSERT INTO [");
+                sb.Append(table.TableName);
+                sb.Append("] ");
+                sb.Append("(");
+                sb.Append(string.Join(',', table.Data.Keys.Select(item => $"[{item.ColumnName}]")));
+                sb.Append(") ");
+                sb.Append("VALUES");
+
+                var valueTypes = new HashSet<Type>() { typeof(int), typeof(double), typeof(decimal), typeof(bool), typeof(short), typeof(Enum) };
+                foreach (var entity in tempEntities)
                 {
-                    if (valueTypes.Contains(key.PropertyType))
+                    sb.Append(" (");
+                    foreach (var key in table.Data.Keys)
                     {
-                        sb.Append(table.Data[key].Invoke(entity));
-                        continue;
-                    }
+                        if (valueTypes.Contains(key.PropertyType))
+                        {
+                            sb.Append(table.Data[key].Invoke(entity));
+                        }
+                        else
+                        {
+                            if (key.PropertyType == typeof(DateTime) || key.PropertyType == typeof(DateTimeOffset))
+                            {
+                                sb.Append("'");
+                                sb.Append($"{table.Data[key].Invoke(entity):yyyy-MM-dd HH:mm:ss}");
+                                sb.Append("'");
+                            }
+                            else if (key.PropertyType == typeof(TimeSpan))
+                            {
+                                sb.Append("'");
+                                sb.Append($"{table.Data[key].Invoke(entity):HH:mm:ss}");
+                                sb.Append("'");
+                            }
+                            else 
+                            {
+                                sb.Append("'");
+                                sb.Append(table.Data[key].Invoke(entity));
+                                sb.Append("'");
+                            }
 
-                    if (key.PropertyType == typeof(string))
-                    {
-                        sb.Append("'");
-                        sb.Append(table.Data[key].Invoke(entity));
-                        sb.Append("'");
+                        }
+                        sb.Append(",");
                     }
-
-                    if (key.PropertyType == typeof(DateTime) || key.PropertyType == typeof(DateTimeOffset))
-                    {
-                        sb.Append("'");
-                        sb.Append($"{table.Data[key].Invoke(entity):yyyy-MM-dd HH:mm:ss}");
-                        sb.Append("'");
-                    }
-
-                    if (key.PropertyType == typeof(TimeSpan))
-                    {
-                        sb.Append("'");
-                        sb.Append($"{table.Data[key].Invoke(entity):HH:mm:ss}");
-                        sb.Append("'");
-                    }
-
-                    sb.Append(",");
+                    sb.Remove(sb.Length - 1, 1);
+                    sb.Append("),");
                 }
+
                 sb.Remove(sb.Length - 1, 1);
-                sb.Append("),");
+                sb.Append(";");
             }
-
-            sb.Remove(sb.Length - 1, 1);
-
             await connection.ExecuteAsync(sb.ToString());
+        }
+
+        public static void BatchInsert<T>(this IDbConnection connection, IEnumerable<T> entities)
+        {
+            var type = typeof(T);
+            Caching<T>();
+            var table = Dict[type];
+            var sb = new StringBuilder();
+            var enumerable = entities as T[] ?? entities.ToArray();
+            while (enumerable.Any())
+            {
+                var tempEntities = enumerable.Take(1000);
+                entities = enumerable.Skip(1000);
+                sb.Append("INSERT INTO [");
+                sb.Append(table.TableName);
+                sb.Append("] ");
+                sb.Append("(");
+                sb.Append(string.Join(',', table.Data.Keys.Select(item => $"[{item.ColumnName}]")));
+                sb.Append(") ");
+                sb.Append("VALUES");
+
+                var valueTypes = new HashSet<Type>() { typeof(int), typeof(double), typeof(decimal), typeof(bool), typeof(short), typeof(Enum) };
+                foreach (var entity in tempEntities)
+                {
+                    sb.Append(" (");
+                    foreach (var key in table.Data.Keys)
+                    {
+                        if (valueTypes.Contains(key.PropertyType))
+                        {
+                            sb.Append(table.Data[key].Invoke(entity));
+                        }
+                        else
+                        {
+                            if (key.PropertyType == typeof(DateTime) || key.PropertyType == typeof(DateTimeOffset))
+                            {
+                                sb.Append("'");
+                                sb.Append($"{table.Data[key].Invoke(entity):yyyy-MM-dd HH:mm:ss}");
+                                sb.Append("'");
+                            }
+                            else if (key.PropertyType == typeof(TimeSpan))
+                            {
+                                sb.Append("'");
+                                sb.Append($"{table.Data[key].Invoke(entity):HH:mm:ss}");
+                                sb.Append("'");
+                            }
+                            else
+                            {
+                                sb.Append("'");
+                                sb.Append(table.Data[key].Invoke(entity));
+                                sb.Append("'");
+                            }
+
+                        }
+                        sb.Append(",");
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    sb.Append("),");
+                }
+
+                sb.Remove(sb.Length - 1, 1);
+                sb.Append(";");
+            }
+            connection.Execute(sb.ToString());
         }
 
         public static async Task TruncateAsync<T>(this IDbConnection connection)
         {
-
-            var type = typeof(T);
-            Caching<T>();
-            var tableName = Dict[type].TableName;
-            await connection.ExecuteAsync($"truncate {tableName}");
+            var type = typeof(T); 
+            var tableName = type.GetCustomAttribute<TableAttribute>()?.Name ?? type.Name;
+            await connection.ExecuteAsync($"truncate table [{tableName}]");
         }
 
-        public static void Caching<T>()
+        public static void Truncate<T>(this IDbConnection connection)
+        {
+            var type = typeof(T);
+            var tableName = type.GetCustomAttribute<TableAttribute>()?.Name ?? type.Name;
+            connection.Execute($"truncate table [{tableName}]");
+        }
+
+        private static void Caching<T>()
         {
             var type = typeof(T);
             if (!Dict.ContainsKey(type))
@@ -108,10 +181,12 @@ namespace Caya.Framework.Dapper
                             columnName = string.IsNullOrEmpty(attributeColumnName) ? columnName : attributeColumnName;
                         }
                     }
-                    var instanceExpression = Expression.Parameter(type, "instance");
+
+                    var objectExpression = Expression.Parameter(typeof(object), "instance");
+                    var instanceExpression = Expression.Convert(objectExpression, type);
                     var memberExpression = Expression.Property(instanceExpression, property);
                     var convertExpression = Expression.Convert(memberExpression, typeof(object));
-                    var lambdaExpression = Expression.Lambda<Func<object, object>>(convertExpression, instanceExpression);
+                    var lambdaExpression = Expression.Lambda<Func<object, object>>(convertExpression, objectExpression);
                     Dict[type].Item2.Add((columnName, propertyName, property.PropertyType), lambdaExpression.Compile());
                     End:;
                 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using EFCore.BulkExtensions;
 using System.Linq;
 using System.Data.Common;
 using System.Data;
+using System.Reflection;
 using Microsoft.Data.SqlClient;
 
 namespace Caya.Framework.EntityFramework
@@ -204,22 +206,79 @@ namespace Caya.Framework.EntityFramework
             _dbContext.Database.ExecuteSqlRaw(sql, @params);
         }
 
-        public IEnumerable<T> QuerySql<T>(string sql, IEnumerable<SqlParameter> @params, TimeSpan timeout)
+        public IEnumerable<T> QuerySql<T>(string sql)
+        {
+            return QuerySql<T>(sql, null, TimeSpan.FromMinutes(5));
+        }
+
+        public IAsyncEnumerable<T> QuerySqlAsync<T>(string sql)
+        {
+            return QuerySqlAsync<T>(sql, null, TimeSpan.FromMinutes(5));
+        }
+
+        public IEnumerable<T> QuerySql<T>(string sql, TimeSpan timeout)
+        {
+            return QuerySql<T>(sql, null, timeout);
+        }
+
+        public IAsyncEnumerable<T> QuerySqlAsync<T>(string sql, TimeSpan timeout)
+        {
+            return QuerySqlAsync<T>(sql, null, timeout);
+        }
+
+        public IEnumerable<T> QuerySql<T>(string sql, object @params)
+        {
+            return QuerySql<T>(sql, @params, TimeSpan.FromMinutes(5));
+        }
+
+        public IAsyncEnumerable<T> QuerySqlAsync<T>(string sql, object @params)
+        {
+            return QuerySqlAsync<T>(sql, @params, TimeSpan.FromMinutes(5));
+        }
+
+        public IEnumerable<T> QuerySql<T>(string sql, object @params, TimeSpan timeout)
         {
             using var connection = _dbContext.Database.GetDbConnection();
             connection.Open();
             var command = connection.CreateCommand();
             var seconds = Convert.ToInt32(timeout.TotalSeconds);
-            if (seconds > 0)
+            command.CommandTimeout = seconds;
+            if (@params != null)
             {
-                command.CommandTimeout = seconds;
+                var propertyArray = @params.GetType().GetProperties();
+                var parameters = new List<SqlParameter>();
+                foreach (var propertyInfo in propertyArray)
+                {
+                    var value = propertyInfo.GetValue(@params);
+                    var propertyName = propertyInfo.Name;
+                    var sb = new StringBuilder();
+                    if (typeof(IEnumerable).IsAssignableFrom(propertyInfo.PropertyType))
+                    {
+                        sb.Append("(");
+                        var array = (IEnumerable) value ?? Array.Empty<object>();
+                        var index = 0;
+                        foreach (var item in array)
+                        {
+                            var parameterName = $"@{propertyName}_{index++}";
+                            sb.Append(parameterName);
+                            sb.Append(',');
+                            parameters.Add(new SqlParameter(parameterName, item));
+                        }
+                        sb.Remove(sb.Length - 1, 1);
+                        sb.Append(")");
+                        sql = sql.Replace($"@{propertyName}", sb.ToString());
+                    }
+                    else
+                    {
+                        parameters.Add(new SqlParameter($"@{propertyInfo.Name}", value));
+                    }
+                }
+                command.Parameters.AddRange(parameters.ToArray());
             }
-
             command.CommandText = sql;
-            command.Parameters.AddRange(@params.ToArray());
-
             using var reader = command.ExecuteReader();
-            var dt = reader.GetSchemaTable();
+            var dt = new DataTable();
+            dt.Load(reader);
             var columns = dt!.Columns.Cast<DataColumn>().ToArray();
             var dict = new Dictionary<string, object>();
             foreach (var dr in dt.Rows.Cast<DataRow>())
@@ -228,27 +287,53 @@ namespace Caya.Framework.EntityFramework
                 {
                     dict[columns[i].ColumnName] = dr[i];
                 }
-
                 yield return FastDataReaderRowConvert.Convert<T>(dict);
             }
         }
 
-        public async IAsyncEnumerable<T> QuerySqlAsync<T>(string sql, IEnumerable<SqlParameter> @params, TimeSpan timeout)
+        public async IAsyncEnumerable<T> QuerySqlAsync<T>(string sql, object @params, TimeSpan timeout)
         {
             await using var connection = _dbContext.Database.GetDbConnection();
             await connection.OpenAsync();
             var command = connection.CreateCommand();
             var seconds = Convert.ToInt32(timeout.TotalSeconds);
-            if (seconds > 0)
+            command.CommandTimeout = seconds;
+            if (@params != null)
             {
-                command.CommandTimeout = seconds;
+                var propertyArray = @params.GetType().GetProperties();
+                var parameters = new List<SqlParameter>();
+                foreach (var propertyInfo in propertyArray)
+                {
+                    var value = propertyInfo.GetValue(@params);
+                    var propertyName = propertyInfo.Name;
+                    var sb = new StringBuilder();
+                    if (typeof(IEnumerable).IsAssignableFrom(propertyInfo.PropertyType))
+                    {
+                        sb.Append("(");
+                        var array = (IEnumerable)value ?? Array.Empty<object>();
+                        var index = 0;
+                        foreach (var item in array)
+                        {
+                            var parameterName = $"@{propertyName}_{index++}";
+                            sb.Append(parameterName);
+                            sb.Append(',');
+                            parameters.Add(new SqlParameter(parameterName, item));
+                        }
+                        sb.Remove(sb.Length - 1, 1);
+                        sb.Append(")");
+                        sql = sql.Replace($"@{propertyName}", sb.ToString());
+                    }
+                    else
+                    {
+                        parameters.Add(new SqlParameter($"@{propertyInfo.Name}", value));
+                    }
+                }
+                command.Parameters.AddRange(parameters.ToArray());
             }
-
             command.CommandText = sql;
-            command.Parameters.AddRange(@params.ToArray());
-
             await using var reader = await command.ExecuteReaderAsync();
-            var dt = reader.GetSchemaTable();
+            var dt = new DataTable();
+            dt.Load(reader);
             var columns = dt!.Columns.Cast<DataColumn>().ToArray();
             var dict = new Dictionary<string, object>();
             foreach (var dr in dt.Rows.Cast<DataRow>())

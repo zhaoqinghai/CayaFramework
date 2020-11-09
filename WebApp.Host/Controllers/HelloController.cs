@@ -31,9 +31,6 @@ namespace WebApp.Console.Controllers
 
         public async Task<ActionResult> SayHello([FromServices] IRedisCacheProvider cacheProvider, [FromServices] IHelloService service, [FromQuery] HelloModel model)
         {
-            var cache = cacheProvider.GetRedisCache("Test");
-            await cache.SetAsync("name", "zhaoqinghai", TimeSpan.FromMinutes(1));
-            var name = await cache.GetAsync("name");
             return new JsonResult(service.SayHello());
         }
 
