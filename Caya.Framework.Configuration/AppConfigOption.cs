@@ -12,6 +12,8 @@ namespace Caya.Framework.Configuration
 
         public LoggingConfig LoggingConfig { get; set; } = new LoggingConfig();
 
+        public MvcConfig MvcConfig { get; set; } = new MvcConfig();
+
         public RedisCluster RedisCluster { get; set; }
 
         public RabbitMqCluster RabbitMqCluster { get; set; }

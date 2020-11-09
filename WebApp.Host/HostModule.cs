@@ -27,11 +27,7 @@ namespace WebApp.Host
     {
         public void OnConfigureServices(IServiceCollection services)
         {
-            services.AddCayaMvcCore().AddFluentValidation(fv =>
-            {
-                fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
-                fv.RegisterValidatorsFromAssemblyContaining<HelloModel>();
-            });
+            services.AddMvcFilters(new Type[] {typeof(ApiExceptionFilter)});
         }
     }
 }
