@@ -39,8 +39,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Mapper", "Ca
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Hangfire", "Caya.Framework.Hangfire\Caya.Framework.Hangfire.csproj", "{2012D4FD-61B8-4023-B0F3-6E72F38B5B31}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Swagger", "Caya.Framework.Swagger\Caya.Framework.Swagger.csproj", "{54404DA9-E686-4816-80BB-C498BEA0A7E7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Util", "Caya.Framework.Util\Caya.Framework.Util.csproj", "{57C6088C-1FF6-4E3B-A7FE-37A5D08733AE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.ElasticSearch", "Caya.Framework.ElasticSearch\Caya.Framework.ElasticSearch.csproj", "{30A256D6-0043-4E79-8062-0983BE61343E}"
@@ -129,10 +127,6 @@ Global
 		{2012D4FD-61B8-4023-B0F3-6E72F38B5B31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2012D4FD-61B8-4023-B0F3-6E72F38B5B31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2012D4FD-61B8-4023-B0F3-6E72F38B5B31}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54404DA9-E686-4816-80BB-C498BEA0A7E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54404DA9-E686-4816-80BB-C498BEA0A7E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54404DA9-E686-4816-80BB-C498BEA0A7E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54404DA9-E686-4816-80BB-C498BEA0A7E7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{57C6088C-1FF6-4E3B-A7FE-37A5D08733AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{57C6088C-1FF6-4E3B-A7FE-37A5D08733AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57C6088C-1FF6-4E3B-A7FE-37A5D08733AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
