@@ -14,7 +14,7 @@ namespace WebApp.Host
 {
     public static class Program
     {
-        public async static Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
             await CreateWebHostBuilder(args).Build().RunAsync();
         }

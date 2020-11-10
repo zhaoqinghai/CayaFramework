@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Caya.Framework.Caching;
-using Caya.Framework.Core;
-using Caya.Framework.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WebApp.BusinessData;
 using WebApp.ServiceInterface;
 
-namespace WebApp.Console.Controllers
+namespace WebApp.Host.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
@@ -29,7 +23,7 @@ namespace WebApp.Console.Controllers
         //    return new JsonResult(_service.SayHello());
         //}
 
-        public async Task<ActionResult> SayHello([FromServices] IRedisCacheProvider cacheProvider, [FromServices] IHelloService service, [FromQuery] HelloModel model)
+        public ActionResult SayHello([FromServices] IRedisCacheProvider cacheProvider, [FromServices] IHelloService service, [FromQuery] HelloModel model)
         {
             return new JsonResult(service.SayHello());
         }

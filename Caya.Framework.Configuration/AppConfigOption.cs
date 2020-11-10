@@ -17,5 +17,7 @@ namespace Caya.Framework.Configuration
         public RedisCluster RedisCluster { get; set; }
 
         public RabbitMqCluster RabbitMqCluster { get; set; }
+
+        public HangfireConfig HangfireConfig { get; set; }
     }
 }

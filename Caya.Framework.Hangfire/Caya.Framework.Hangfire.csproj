@@ -6,9 +6,13 @@
 
   <ItemGroup>
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.17" />
+    <PackageReference Include="Hangfire.MySqlStorage" Version="2.0.3" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.7.1" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.7.17" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Caya.Framework.Configuration\Caya.Framework.Configuration.csproj" />
     <ProjectReference Include="..\Caya.Framework.Core\Caya.Framework.Core.csproj" />
   </ItemGroup>
 

@@ -14,12 +14,13 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Threading.Tasks;
+using Caya.Framework.Hangfire;
 using WebApp.Host.Filters;
 using WebApp.Service;
 
 namespace WebApp.Host
 {
-    [DependsOn(typeof(CayaMvcModule), typeof(ServiceModule), typeof(LoggingModule), typeof(CachingModule))]
+    [DependsOn(typeof(CayaMvcModule), typeof(ServiceModule), typeof(LoggingModule), typeof(CachingModule), typeof(HangfireModule))]
     public class HostModule : IModule
     {
         public void OnConfigureServices(IServiceCollection services)
