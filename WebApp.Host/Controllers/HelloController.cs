@@ -8,7 +8,7 @@ using Caya.Framework.Core;
 using Caya.Framework.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using WebApp.BussinessData;
+using WebApp.BusinessData;
 using WebApp.ServiceInterface;
 
 namespace WebApp.Console.Controllers

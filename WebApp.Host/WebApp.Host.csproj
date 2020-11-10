@@ -15,7 +15,7 @@
     <ProjectReference Include="..\Caya.Framework.Caching\Caya.Framework.Caching.csproj" />
     <ProjectReference Include="..\Caya.Framework.Core\Caya.Framework.Core.csproj" />
     <ProjectReference Include="..\Caya.Framework.Mvc\Caya.Framework.Mvc.csproj" />
-    <ProjectReference Include="..\WebApp.BussinessData\WebApp.BussinessData.csproj" />
+    <ProjectReference Include="..\WebApp.BussinessData\WebApp.BusinessData.csproj" />
     <ProjectReference Include="..\WebApp.Service\WebApp.Service.csproj" />
   </ItemGroup>
 

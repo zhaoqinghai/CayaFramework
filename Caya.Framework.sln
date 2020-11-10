@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp.DataAccessInterface"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp.Common", "WebApp.Common\WebApp.Common.csproj", "{A8BA7854-0B40-4340-9737-5EC67B03AA98}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp.BussinessData", "WebApp.BussinessData\WebApp.BussinessData.csproj", "{1228A67E-5C88-43C9-9C7B-1A59DB270A17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApp.BusinessData", "WebApp.BussinessData\WebApp.BusinessData.csproj", "{1228A67E-5C88-43C9-9C7B-1A59DB270A17}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Caching", "Caya.Framework.Caching\Caya.Framework.Caching.csproj", "{71B4B659-739D-4B9F-BEA5-BEE3CAA23B87}"
 EndProject

@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApp.BussinessData
+namespace WebApp.BusinessData
 {
     public class HelloModel
     {
