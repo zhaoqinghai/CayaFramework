@@ -37,8 +37,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.EventBus", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Mapper", "Caya.Framework.Mapper\Caya.Framework.Mapper.csproj", "{39AACBBF-36F5-4DAD-926E-1C9B7A00A63B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Validate", "Caya.Framework.Validate\Caya.Framework.Validate.csproj", "{87DAC290-E39D-4B6A-9A4D-4714EE5E53FC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Hangfire", "Caya.Framework.Hangfire\Caya.Framework.Hangfire.csproj", "{2012D4FD-61B8-4023-B0F3-6E72F38B5B31}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Swagger", "Caya.Framework.Swagger\Caya.Framework.Swagger.csproj", "{54404DA9-E686-4816-80BB-C498BEA0A7E7}"
@@ -46,8 +44,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Util", "Caya.Framework.Util\Caya.Framework.Util.csproj", "{57C6088C-1FF6-4E3B-A7FE-37A5D08733AE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.ElasticSearch", "Caya.Framework.ElasticSearch\Caya.Framework.ElasticSearch.csproj", "{30A256D6-0043-4E79-8062-0983BE61343E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Caya.Framework.Mongo", "Caya.Framework.Mongo\Caya.Framework.Mongo.csproj", "{01F34AD5-83AA-4C05-9DEA-FC9B6AC76144}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{184BA078-0D60-4E2D-9098-EC70F0DA8248}"
 EndProject
@@ -129,10 +125,6 @@ Global
 		{39AACBBF-36F5-4DAD-926E-1C9B7A00A63B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39AACBBF-36F5-4DAD-926E-1C9B7A00A63B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39AACBBF-36F5-4DAD-926E-1C9B7A00A63B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87DAC290-E39D-4B6A-9A4D-4714EE5E53FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87DAC290-E39D-4B6A-9A4D-4714EE5E53FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{87DAC290-E39D-4B6A-9A4D-4714EE5E53FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{87DAC290-E39D-4B6A-9A4D-4714EE5E53FC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2012D4FD-61B8-4023-B0F3-6E72F38B5B31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2012D4FD-61B8-4023-B0F3-6E72F38B5B31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2012D4FD-61B8-4023-B0F3-6E72F38B5B31}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -149,10 +141,6 @@ Global
 		{30A256D6-0043-4E79-8062-0983BE61343E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30A256D6-0043-4E79-8062-0983BE61343E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30A256D6-0043-4E79-8062-0983BE61343E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01F34AD5-83AA-4C05-9DEA-FC9B6AC76144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01F34AD5-83AA-4C05-9DEA-FC9B6AC76144}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01F34AD5-83AA-4C05-9DEA-FC9B6AC76144}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01F34AD5-83AA-4C05-9DEA-FC9B6AC76144}.Release|Any CPU.Build.0 = Release|Any CPU
 		{958725EA-FC0A-4A33-886B-9F4564424FFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{958725EA-FC0A-4A33-886B-9F4564424FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{958725EA-FC0A-4A33-886B-9F4564424FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
