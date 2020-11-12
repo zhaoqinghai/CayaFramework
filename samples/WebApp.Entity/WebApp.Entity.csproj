@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Caya.Framework.Core\Caya.Framework.Core.csproj" />
+    <ProjectReference Include="..\..\Caya.Framework.Core\Caya.Framework.Core.csproj" />
   </ItemGroup>
 
 </Project>
