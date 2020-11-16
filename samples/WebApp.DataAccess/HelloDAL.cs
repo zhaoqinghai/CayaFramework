@@ -36,10 +36,10 @@ namespace WebApp.DataAccess
         public string SayHello()
         {
             using var repo = _factory.CreateReadRepo<HelloDbContext>();
-            var list = new List<User>();
-            var name = repo.GetQuery<User>().Select(item => item.Name).FirstOrDefault();
+            //repo.InsertRange(list);
+            //var name = repo.GetQuery<User>().Select(item => item.Name).FirstOrDefault();
             var a = repo.QuerySql<User>("select * from [User] where Age in @AgeList", new { AgeList = new[] { 18, 20 } }).ToList();
-            return name;
+            return "name";
             //using (var connection = _connectionFactory.CreateReadDbConnection("Test0"))
             //{
             //    return connection.QueryFirstOrDefault<string>("select top(1) Name from [User]");

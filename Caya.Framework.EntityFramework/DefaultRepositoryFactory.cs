@@ -21,7 +21,7 @@ namespace Caya.Framework.EntityFramework
 
         private ILoggerFactory _loggerFactory;
 
-        public CayaRepositroy<TDbContext> CreateReadRepo<TDbContext>() where TDbContext : CayaDbContext
+        public CayaRepository<TDbContext> CreateReadRepo<TDbContext>() where TDbContext : CayaDbContext
         {
             var reflectorFunc = _typeFuncDict.GetOrAdd(typeof(TDbContext), type => {
                 var optionsParameter = Expression.Parameter(typeof(DbContextOptions), "options");
@@ -41,17 +41,17 @@ namespace Caya.Framework.EntityFramework
             switch (option.Kind)
             {
                 case DbKind.Mysql:
-                    return new CayaRepositroy<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySQL(option.ConnectionStr).Options, _loggerFactory));
+                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySQL(option.ConnectionStr).Options, _loggerFactory));
                 case DbKind.Postgresql:
-                    return new CayaRepositroy<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseNpgsql(option.ConnectionStr).Options, _loggerFactory));
+                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseNpgsql(option.ConnectionStr).Options, _loggerFactory));
                 case DbKind.SqlServer:
-                    return new CayaRepositroy<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseSqlServer(option.ConnectionStr).Options, _loggerFactory));
+                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseSqlServer(option.ConnectionStr).Options, _loggerFactory));
                 default:
                     throw new InvalidOperationException("请配置数据库种类");
             }
         }
 
-        public CayaRepositroy<TDbContext> CreateWriteRepo<TDbContext>() where TDbContext : CayaDbContext
+        public CayaRepository<TDbContext> CreateWriteRepo<TDbContext>() where TDbContext : CayaDbContext
         {
             var reflectorFunc = _typeFuncDict.GetOrAdd(typeof(TDbContext), type => {
                 var optionsParameter = Expression.Parameter(typeof(DbContextOptions), "options");
@@ -69,11 +69,11 @@ namespace Caya.Framework.EntityFramework
             switch (option.Kind)
             {
                 case DbKind.Mysql:
-                    return new CayaRepositroy<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySQL(option.ConnectionStr).Options, _loggerFactory));
+                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySQL(option.ConnectionStr).Options, _loggerFactory));
                 case DbKind.Postgresql:
-                    return new CayaRepositroy<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseNpgsql(option.ConnectionStr).Options, _loggerFactory));
+                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseNpgsql(option.ConnectionStr).Options, _loggerFactory));
                 case DbKind.SqlServer:
-                    return new CayaRepositroy<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseSqlServer(option.ConnectionStr).Options, _loggerFactory));
+                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseSqlServer(option.ConnectionStr).Options, _loggerFactory));
                 default:
                     throw new InvalidOperationException("请配置数据库种类");
             }

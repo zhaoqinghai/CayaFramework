@@ -7,8 +7,8 @@ namespace Caya.Framework.EntityFramework
 {
     public interface IRepositoryFactory
     {
-        CayaRepositroy<TDbContext> CreateReadRepo<TDbContext>() where TDbContext : CayaDbContext;
+        CayaRepository<TDbContext> CreateReadRepo<TDbContext>() where TDbContext : CayaDbContext;
 
-        CayaRepositroy<TDbContext> CreateWriteRepo<TDbContext>() where TDbContext : CayaDbContext;
+        CayaRepository<TDbContext> CreateWriteRepo<TDbContext>() where TDbContext : CayaDbContext;
     }
 }

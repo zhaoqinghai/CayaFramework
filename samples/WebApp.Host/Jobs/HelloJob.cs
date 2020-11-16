@@ -8,7 +8,7 @@ using WebApp.ServiceInterface;
 
 namespace WebApp.Host.Jobs
 {
-    public class HelloJob : ICornJob
+    public class HelloJob
     {
         private readonly ILogger<HelloJob> _logger;
         private readonly IHelloService _service;
