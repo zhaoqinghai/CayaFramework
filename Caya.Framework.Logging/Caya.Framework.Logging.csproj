@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
+    <RepositoryUrl>https://github.com/zhaoqinghai/CayaMoule</RepositoryUrl>
+    <Description>update version .net 5</Description>
+    <PackageReleaseNotes>update version .net 5</PackageReleaseNotes>
+    <Version>1.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -13,7 +18,7 @@
     <PackageReference Include="Serilog.Sinks.ElasticSearch" Version="8.4.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.MongoDB" Version="4.0.0" />
-    <PackageReference Include="System.IO.Pipelines" Version="4.7.3" />
+    <PackageReference Include="System.IO.Pipelines" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Caya.Framework.Configuration\Caya.Framework.Configuration.csproj" />

@@ -1,7 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
+    <Description>update version .net 5</Description>
+    <PackageReleaseNotes>update version .net 5</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/zhaoqinghai/CayaMoule</RepositoryUrl>
   </PropertyGroup>
 
 </Project>

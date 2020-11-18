@@ -1,12 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
+    <Description>update version .net 5</Description>
+    <PackageReleaseNotes>update version .net 5</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/zhaoqinghai/CayaMoule</RepositoryUrl>
+    <Version>1.1.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Mapster" Version="6.5.1" />
+    <PackageReference Include="Mapster" Version="7.0.0" />
   </ItemGroup>
 </Project>

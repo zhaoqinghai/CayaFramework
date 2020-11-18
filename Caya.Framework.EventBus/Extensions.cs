@@ -13,13 +13,16 @@ namespace Caya.Framework.EventBus
             services.AddSingleton(typeof(T));
             var provider = services.BuildServiceProvider();
             var rabbitMqManager = provider.GetService<RabbitMqManager>();
-            var bus = string.IsNullOrEmpty(name) ? rabbitMqManager.Default : rabbitMqManager.GetBus(name);
-            var autoSubscriber = new AutoSubscriber(bus, "")
+            if (rabbitMqManager != null)
             {
-                AutoSubscriberMessageDispatcher = new ConsumerMessageDispatcher(provider)
-            };
-            autoSubscriber.Subscribe(new Type[] {typeof(T)});
-            autoSubscriber.SubscribeAsync(new Type[] { typeof(T) });
+                var bus = string.IsNullOrEmpty(name) ? rabbitMqManager.Default : rabbitMqManager.GetBus(name);
+                var autoSubscriber = new AutoSubscriber(bus, "")
+                {
+                    AutoSubscriberMessageDispatcher = new ConsumerMessageDispatcher(provider)
+                };
+                autoSubscriber.Subscribe(new Type[] {typeof(T)});
+                autoSubscriber.SubscribeAsync(new Type[] { typeof(T) });
+            }
         }
     }
 }

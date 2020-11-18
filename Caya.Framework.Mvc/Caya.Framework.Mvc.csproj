@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
+    <Description>update version .net 5</Description>
+    <RepositoryUrl>https://github.com/zhaoqinghai/CayaMoule</RepositoryUrl>
+    <PackageReleaseNotes>update version .net 5</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation.AspNetCore" Version="9.2.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0" />
   </ItemGroup>
 
   <ItemGroup>
