@@ -31,7 +31,8 @@ namespace Caya.Framework.EntityFramework
             {
                 ConnectionStr = item.ConnectionStr,
                 Kind = item.Kind,
-                State = item.State
+                State = item.State,
+                Version = item.Version
             }).ToArray();
             if (_dict.ContainsKey(typeof(TDbContext)))
             {

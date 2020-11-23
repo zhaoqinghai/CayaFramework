@@ -41,7 +41,7 @@ namespace Caya.Framework.EntityFramework
             switch (option.Kind)
             {
                 case DbKind.Mysql:
-                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySQL(option.ConnectionStr).Options, _loggerFactory));
+                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySql(option.ConnectionStr, new MySqlServerVersion(new Version(option.Version))).Options, _loggerFactory));
                 case DbKind.Postgresql:
                     return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseNpgsql(option.ConnectionStr).Options, _loggerFactory));
                 case DbKind.SqlServer:
@@ -69,7 +69,7 @@ namespace Caya.Framework.EntityFramework
             switch (option.Kind)
             {
                 case DbKind.Mysql:
-                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySQL(option.ConnectionStr).Options, _loggerFactory));
+                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySql(option.ConnectionStr, new MySqlServerVersion(new Version(option.Version))).Options, _loggerFactory));
                 case DbKind.Postgresql:
                     return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseNpgsql(option.ConnectionStr).Options, _loggerFactory));
                 case DbKind.SqlServer:

@@ -12,5 +12,7 @@ namespace Caya.Framework.EntityFramework
         public DbState State { get; set; }
 
         public string ConnectionStr { get; set; }
+
+        public string Version { get; set; }
     }
 }
