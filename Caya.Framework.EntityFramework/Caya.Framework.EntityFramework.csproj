@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Description>update version .net 5</Description>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <PackageReleaseNotes>update version .net 5</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/zhaoqinghai/CayaMoule</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
