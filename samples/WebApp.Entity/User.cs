@@ -1,4 +1,5 @@
 ﻿using Caya.Framework.Core;
+using Caya.Framework.Core.Entity;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

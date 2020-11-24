@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Description>update version .net 5</Description>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <PackageReleaseNotes>update version .net 5</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/zhaoqinghai/CayaMoule</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -13,10 +13,6 @@
     <PackageReference Include="EFCore.BulkExtensions" Version="3.2.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="5.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.0" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.0-alpha.2" />
   </ItemGroup>
 
   <ItemGroup>

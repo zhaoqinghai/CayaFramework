@@ -15,7 +15,7 @@ namespace Caya.Framework.EntityFramework
 {
     internal class DefaultRepositoryFactory: IRepositoryFactory
     {
-        private readonly Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbOption>>> _dict;
+        private readonly Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbContextOptions>>> _dict;
 
         private readonly ConcurrentDictionary<Type, Func<DbContextOptions, ILoggerFactory, object>> _typeFuncDict = new ConcurrentDictionary<Type, Func<DbContextOptions, ILoggerFactory, object>>();
 
@@ -38,17 +38,8 @@ namespace Caya.Framework.EntityFramework
             var optionArray = _dict[typeof(TDbContext)][DbState.Read].ToArray();
             var random = new Random().Next(optionArray.Count());
             var option = optionArray[random];
-            switch (option.Kind)
-            {
-                case DbKind.Mysql:
-                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySql(option.ConnectionStr, new MySqlServerVersion(new Version(option.Version))).Options, _loggerFactory));
-                case DbKind.Postgresql:
-                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseNpgsql(option.ConnectionStr).Options, _loggerFactory));
-                case DbKind.SqlServer:
-                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseSqlServer(option.ConnectionStr).Options, _loggerFactory));
-                default:
-                    throw new InvalidOperationException("请配置数据库种类");
-            }
+
+            return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(option, _loggerFactory));
         }
 
         public CayaRepository<TDbContext> CreateWriteRepo<TDbContext>() where TDbContext : CayaDbContext
@@ -66,17 +57,7 @@ namespace Caya.Framework.EntityFramework
             var optionArray = _dict[typeof(TDbContext)][DbState.Write].ToArray();
             var random = new Random().Next(optionArray.Count());
             var option = optionArray[random];
-            switch (option.Kind)
-            {
-                case DbKind.Mysql:
-                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseMySql(option.ConnectionStr, new MySqlServerVersion(new Version(option.Version))).Options, _loggerFactory));
-                case DbKind.Postgresql:
-                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseNpgsql(option.ConnectionStr).Options, _loggerFactory));
-                case DbKind.SqlServer:
-                    return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(new DbContextOptionsBuilder().UseSqlServer(option.ConnectionStr).Options, _loggerFactory));
-                default:
-                    throw new InvalidOperationException("请配置数据库种类");
-            }
+            return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(option, _loggerFactory));
         }
 
         internal DefaultRepositoryFactory(RepositoryOptions options, ILoggerFactory loggerFactory)

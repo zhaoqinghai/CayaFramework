@@ -25,7 +25,7 @@ namespace WebApp.DataAccess
             services.AddScoped<IHelloDAL, HelloDAL>();
             services.AddRepository(options =>
             {
-                options.AddDbContext<HelloDbContext>("Test0");
+                //options.AddDbContext<HelloDbContext>("Test0");
             });
         }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Caya.Framework.Core
+namespace Caya.Framework.Core.Entity
 {
     public class Entity<T>
     {

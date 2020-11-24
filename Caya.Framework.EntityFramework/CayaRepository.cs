@@ -161,6 +161,7 @@ namespace Caya.Framework.EntityFramework
         #region 查
         public IQueryable<TEntity> GetQuery<TEntity>() where TEntity : class
         {
+            var a = _dbContext.Set<TEntity>().Take(10).ToList();
             return _dbContext.Set<TEntity>();
         }
 

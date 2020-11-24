@@ -12,62 +12,41 @@ namespace Caya.Framework.EntityFramework
 {
     public class RepositoryOptions
     {
-        private Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbOption>>> _dict = new Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbOption>>>();
+        private Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbContextOptions>>> _dict = new Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbContextOptions>>>();
 
-        private readonly DatabaseCluster _cluster;
-        internal RepositoryOptions(DatabaseCluster cluster)
+        internal RepositoryOptions()
         {
-            _cluster = cluster;
         }
 
-        internal Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbOption>>> GetDbOptionDict()
+        internal Dictionary<Type, Dictionary<DbState, IReadOnlyList<DbContextOptions>>> GetDbOptionDict()
         {
             return _dict;
         }
 
-        public void AddDbContext<TDbContext>(string dbName) where TDbContext : DbContext
+        public void AddReadDbContext(Type dbContextType, DbContextOptionsBuilder builder)
         {
-            var dbOptions = _cluster.Configs.Where(item => item.DbName == dbName).Select(item => new DbOption()
+            if (!_dict.ContainsKey(dbContextType))
             {
-                ConnectionStr = item.ConnectionStr,
-                Kind = item.Kind,
-                State = item.State,
-                Version = item.Version
-            }).ToArray();
-            if (_dict.ContainsKey(typeof(TDbContext)))
-            {
-                var readSet = new HashSet<DbOption>(_dict[typeof(TDbContext)][DbState.Read], new DbOptionComparer());
-                foreach (var dbOption in dbOptions.Where(item => item.State.HasFlag(DbState.Read)))
-                {
-                    readSet.Add(dbOption);
-                }
-                _dict[typeof(TDbContext)][DbState.Read] = readSet.ToImmutableList();
-
-                var writeSet = new HashSet<DbOption>(_dict[typeof(TDbContext)][DbState.Write], new DbOptionComparer());
-                foreach (var dbOption in dbOptions.Where(item => item.State.HasFlag(DbState.Write)))
-                {
-                    writeSet.Add(dbOption);
-                }
-                _dict[typeof(TDbContext)][DbState.Read] = writeSet.ToImmutableList();
+                _dict[dbContextType] = new Dictionary<DbState, IReadOnlyList<DbContextOptions>>();
+                _dict[dbContextType][DbState.Write] = new List<DbContextOptions>().ToImmutableList();
+                _dict[dbContextType][DbState.Read] = new List<DbContextOptions>().ToImmutableList();
             }
-            else
+            var readSet = new HashSet<DbContextOptions>(_dict[dbContextType][DbState.Read]);
+            readSet.Add(builder.Options);
+            _dict[dbContextType][DbState.Read] = readSet.ToImmutableList();
+        }
+
+        public void AddWriteDbContext(Type dbContextType, DbContextOptionsBuilder builder)
+        {
+            if (!_dict.ContainsKey(dbContextType))
             {
-                _dict[typeof(TDbContext)] = new Dictionary<DbState, IReadOnlyList<DbOption>>();
-
-                var readSet = new HashSet<DbOption>(new DbOptionComparer());
-                foreach (var dbOption in dbOptions.Where(item => item.State.HasFlag(DbState.Read)))
-                {
-                    readSet.Add(dbOption);
-                }
-                _dict[typeof(TDbContext)][DbState.Read] = readSet.ToImmutableList();
-
-                var writeSet = new HashSet<DbOption>(new DbOptionComparer());
-                foreach (var dbOption in dbOptions.Where(item => item.State.HasFlag(DbState.Write)))
-                {
-                    writeSet.Add(dbOption);
-                }
-                _dict[typeof(TDbContext)][DbState.Write] = writeSet.ToImmutableList();
+                _dict[dbContextType] = new Dictionary<DbState, IReadOnlyList<DbContextOptions>>();
+                _dict[dbContextType][DbState.Write] = new List<DbContextOptions>().ToImmutableList();
+                _dict[dbContextType][DbState.Read] = new List<DbContextOptions>().ToImmutableList();
             }
+            var writeSet = new HashSet<DbContextOptions>(_dict[dbContextType][DbState.Write]);
+            writeSet.Add(builder.Options);
+            _dict[dbContextType][DbState.Write] = writeSet.ToImmutableList();
         }
     }
 }

@@ -19,8 +19,6 @@ namespace Caya.Framework.Configuration
 
         public DbState State { get; set; }
 
-        public string Version { get; set; }
-
         public string DbName { get; set; }
     }
 }

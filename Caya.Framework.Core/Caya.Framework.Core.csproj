@@ -5,7 +5,7 @@
     <Description>update version .net 5</Description>
     <PackageReleaseNotes>update version .net 5</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/zhaoqinghai/CayaMoule</RepositoryUrl>
-    <Version>1.1.0</Version>
+    <Version>1.1.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
