@@ -21,8 +21,10 @@ namespace Caya.Framework.EntityFramework
             _dbContext = dbContext;
         }
 
+        public TDbContext DbContext => _dbContext;
+
         #region 私有成员
-        protected CayaDbContext _dbContext;
+        protected TDbContext _dbContext;
         #endregion
 
         #region 事务
