@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace Caya.Framework.Caching
 {
@@ -19,5 +20,7 @@ namespace Caya.Framework.Caching
             services.AddSingleton(new RedisManager(redisCluster));
             services.AddTransient<IRedisCacheProvider, DefaultRedisCacheProvider>();
         }
+
+        public IConfiguration Configuration { get; set; }
     }
 }

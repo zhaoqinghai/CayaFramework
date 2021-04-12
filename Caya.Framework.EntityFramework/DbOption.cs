@@ -7,12 +7,10 @@ namespace Caya.Framework.EntityFramework
 {
     public class DbOption
     {
-        public DbKind Kind { get; set; }
-
         public DbState State { get; set; }
 
         public string ConnectionStr { get; set; }
 
-        public string Version { get; set; }
+        public string GroupName { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Caya.Framework.Dapper;
 using Caya.Framework.EntityFramework;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,17 +14,15 @@ namespace WebApp.DataAccess
     public class HelloDAL : IHelloDAL
     {
         private readonly ILogger<HelloDAL> _logger;
-        private readonly IRepositoryFactory _factory;
-        private readonly IDbConnectionFactory _connectionFactory;
-        public HelloDAL(IRepositoryFactory factory, ILogger<HelloDAL> logger, IDbConnectionFactory connectionFactory) 
+        private readonly RepositoryFactoryResolver _resolver;
+        public HelloDAL(ILogger<HelloDAL> logger, RepositoryFactoryResolver resolver) 
         {
             _logger = logger;
-            _factory = factory;
-            _connectionFactory = connectionFactory;
+            _resolver = resolver;
         }
         public async Task Insert()
         {
-            using var repo = _factory.CreateReadRepo<HelloDbContext>();
+            using var repo = _resolver(DbKind.Postgresql).CreateRepo<HelloDbContext>();
             await repo.InsertAsync<User>(new User()
             {
                 Name = "赵庆海",
@@ -35,10 +32,12 @@ namespace WebApp.DataAccess
         }
         public string SayHello()
         {
-            using var repo = _factory.CreateReadRepo<HelloDbContext>();
-            //repo.InsertRange(list);
-            //var name = repo.GetQuery<User>().Select(item => item.Name).FirstOrDefault();
-            var a = repo.QuerySql<User>("select * from [User] where Age in @AgeList", new { AgeList = new[] { 18, 20 } }).ToList();
+            using var repo = _resolver(DbKind.Postgresql).CreateRepo<HelloDbContext>();
+            var a = repo.GetQuery<User>().ToList();
+            //using var repo = _factory.CreateReadRepo<HelloDbContext>();
+            ////repo.InsertRange(list);
+            ////var name = repo.GetQuery<User>().Select(item => item.Name).FirstOrDefault();
+            //var a = repo.QuerySql<User>("select * from [User] where Age in @AgeList", new { AgeList = new[] { 18, 20 } }).ToList();
             return "name";
             //using (var connection = _connectionFactory.CreateReadDbConnection("Test0"))
             //{

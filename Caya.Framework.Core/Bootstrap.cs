@@ -3,17 +3,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Caya.Framework.Core;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace Caya.Framework.Core
 {
     public static class Bootstrap
     {
-        public static void AddModules(this IServiceCollection services)
+        public static void AddModules(this IServiceCollection services, IConfiguration configuration)
         {
             var modules = IModuleFinder.GetModules();
+            
             foreach (var module in modules)
             {
+                module.Configuration = configuration;
                 module.OnConfigureServices(services);
             }
         }

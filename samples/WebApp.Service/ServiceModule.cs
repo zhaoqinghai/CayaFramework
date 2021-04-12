@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using WebApp.DataAccess;
 using WebApp.ServiceInterface;
 
@@ -20,5 +21,7 @@ namespace WebApp.Service
         {
             services.AddScoped<IHelloService, HelloService>();
         }
+
+        public IConfiguration Configuration { get; set; }
     }
 }

@@ -35,8 +35,8 @@ namespace Caya.Framework.Mvc
         public void OnConfigureServices(IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
-            var mvcConfig = provider.GetService<IOptions<AppConfigOption>>().Value.MvcConfig;
-            if (mvcConfig.IsFluentValidate)
+            var mvcConfig = provider.GetService<IOptions<AppConfigOption>>()?.Value.MvcConfig;
+            if (mvcConfig?.IsFluentValidate ?? false)
             {
                 var assemblyList = mvcConfig.AssemblyNameList.Select(_ => Assembly.Load(new AssemblyName(_)));
                
@@ -70,5 +70,7 @@ namespace Caya.Framework.Mvc
                     });
             }
         }
+
+        public IConfiguration Configuration { get; set; }
     }
 }

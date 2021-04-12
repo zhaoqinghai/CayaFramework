@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Caya.Framework.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +13,7 @@ namespace WebApp.Host.Filters
     {
         public Task OnExceptionAsync(ExceptionContext context)
         {
-            var logger = context.GetService<ILogger<ApiExceptionFilter>>();
+            var logger = context.HttpContext.RequestServices.GetService<ILogger<ApiExceptionFilter>>();
             logger.LogInformation("123");
             logger.LogError(context.Exception, "Data {0}", new object[]{JsonConvert.SerializeObject(context.HttpContext.Items) });
             

@@ -14,7 +14,7 @@ namespace Caya.Framework.EventBus
         public void OnConfigureServices(IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
-            var rabbitMqCluster = provider.GetService<IOptions<AppConfigOption>>().Value.RabbitMqCluster;
+            var rabbitMqCluster = provider.GetService<IOptions<AppConfigOption>>()?.Value.RabbitMqCluster;
             services.AddSingleton(new RabbitMqManager(rabbitMqCluster));
             services.AddTransient<IEventBusProvider, DefaultEventBusProvider>();
         }

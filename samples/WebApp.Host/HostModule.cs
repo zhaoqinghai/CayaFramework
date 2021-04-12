@@ -1,7 +1,5 @@
-﻿using Caya.Framework.Caching;
-using Caya.Framework.Core;
+﻿using Caya.Framework.Core;
 using Caya.Framework.Logging;
-using Caya.Framework.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,18 +12,22 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Threading.Tasks;
-using Caya.Framework.Hangfire;
+using Microsoft.Extensions.Configuration;
 using WebApp.Host.Filters;
 using WebApp.Service;
+using Caya.Framework.Mvc;
 
 namespace WebApp.Host
 {
-    [DependsOn(typeof(CayaMvcModule), typeof(ServiceModule), typeof(LoggingModule), typeof(CachingModule), typeof(HangfireModule))]
+    [DependsOn(typeof(ServiceModule), typeof(CayaMvcModule))]
     public class HostModule : IModule
     {
         public void OnConfigureServices(IServiceCollection services)
         {
+            //services.AddControllers(x => x.Filters.Add<ApiExceptionFilter>());
             services.AddMvcFilters(new Type[] {typeof(ApiExceptionFilter)});
         }
+
+        public IConfiguration Configuration { get; set; }
     }
 }

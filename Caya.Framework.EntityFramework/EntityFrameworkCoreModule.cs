@@ -5,14 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace Caya.Framework.EntityFramework
 {
     [DependsOn(typeof(ConfiguratonModule), typeof(LoggingModule))]
-    public class EntityFrameworkCoreModule : IModule
+    public abstract class EntityFrameworkCoreModule : IModule
     {
-        public void OnConfigureServices(IServiceCollection services)
-        {
-        }
+        public abstract void OnConfigureServices(IServiceCollection services);
+        public IConfiguration Configuration { get; set; }
     }
 }

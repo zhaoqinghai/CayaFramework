@@ -5,26 +5,24 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using EFCore.BulkExtensions;
 using System.Linq;
 using System.Data.Common;
 using System.Data;
 using System.Reflection;
-using Microsoft.Data.SqlClient;
+using System.Data.SqlClient;
+using Dapper;
 
 namespace Caya.Framework.EntityFramework
 {
-    public class CayaRepository<TDbContext> : IDisposable where TDbContext : CayaDbContext
+    public abstract class CayaRepository<TDbContext> : IDisposable where TDbContext : CayaDbContext
     {
-        public CayaRepository(TDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        protected CayaRepository(TDbContext dbContext) => (_dbContext, _options) = (dbContext, RepositoryOptions.Default);
 
         public TDbContext DbContext => _dbContext;
 
         #region 私有成员
-        protected TDbContext _dbContext;
+        protected readonly TDbContext _dbContext;
+        protected readonly RepositoryOptions _options;
         #endregion
 
         #region 事务
@@ -67,7 +65,7 @@ namespace Caya.Framework.EntityFramework
             _dbContext.Add(entity);
         }
 
-        public void BulkInsert<TEntity>(IEnumerable<TEntity> entities, BulkConfig config = null) where TEntity : class
+        public void BulkInsert<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
             _dbContext.BulkInsert<TEntity>(entities.ToList());
         }
@@ -82,7 +80,7 @@ namespace Caya.Framework.EntityFramework
             await _dbContext.AddRangeAsync(entities.ToList());
         }
 
-        public async Task BulkInsertAsync<TEntity>(IEnumerable<TEntity> entities, BulkConfig config = null) where TEntity : class
+        public async Task BulkInsertAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
             await _dbContext.BulkInsertAsync<TEntity>(entities.ToList());
         }
@@ -101,9 +99,9 @@ namespace Caya.Framework.EntityFramework
             });
         }
 
-        public void BulkDelete<TEntity>(IEnumerable<TEntity> entities, BulkConfig config = null) where TEntity : class
+        public void BulkDelete<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
-            _dbContext.BulkDelete<TEntity>(entities.ToList(), config);
+            _dbContext.BulkDelete<TEntity>(entities.ToList());
         }
 
         public Task DeleteAsync<TEntity>(TEntity entity) where TEntity : class
@@ -120,9 +118,9 @@ namespace Caya.Framework.EntityFramework
             return Task.CompletedTask;
         }
 
-        public async Task BulkDeleteAsync<TEntity>(IEnumerable<TEntity> entities, BulkConfig config = null) where TEntity : class
+        public async Task BulkDeleteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
-            await _dbContext.BulkDeleteAsync<TEntity>(entities.ToList(), config);
+            await _dbContext.BulkDeleteAsync<TEntity>(entities.ToList());
         }
         #endregion
 
@@ -137,9 +135,9 @@ namespace Caya.Framework.EntityFramework
             _dbContext.UpdateRange(entities);
         }
 
-        public void BulkUpdate<TEntity>(IEnumerable<TEntity> entities, BulkConfig config = null) where TEntity : class
+        public void BulkUpdate<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
-            _dbContext.BulkUpdate<TEntity>(entities.ToList(), config);
+            _dbContext.BulkUpdate<TEntity>(entities);
         }
 
         public Task UpdateAsync<TEntity>(TEntity entity) where TEntity : class
@@ -154,9 +152,9 @@ namespace Caya.Framework.EntityFramework
             return Task.CompletedTask;
         }
 
-        public async Task BulkUpdateAsync<TEntity>(IEnumerable<TEntity> entities, BulkConfig config = null) where TEntity : class
+        public async Task BulkUpdateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
         {
-            await _dbContext.BulkUpdateAsync<TEntity>(entities.ToList(), config);
+            await _dbContext.BulkUpdateAsync<TEntity>(entities.ToList());
         }
         #endregion
 
@@ -183,14 +181,15 @@ namespace Caya.Framework.EntityFramework
         #endregion
 
         #region 清空
-        public void Truncate<TEntity>() where TEntity : class
+        public virtual void Truncate<TEntity>() where TEntity : class
         {
-            _dbContext.Truncate<TEntity>();
+            _dbContext.Database.ExecuteSqlRaw($"TRUNCATE TABLE {EntityToTableMapping.GetTableName<TEntity>()}");
         }
 
-        public async Task TruncateAsync<TEntity>() where TEntity : class
+        public virtual Task TruncateAsync<TEntity>() where TEntity : class
         {
-            await _dbContext.TruncateAsync<TEntity>();
+            return _dbContext.Database.ExecuteSqlRawAsync(
+                $"TRUNCATE TABLE {EntityToTableMapping.GetTableName<TEntity>()}");
         }
         #endregion
 
@@ -215,30 +214,26 @@ namespace Caya.Framework.EntityFramework
             _dbContext.Database.ExecuteSqlRaw(sql, @params);
         }
 
+        public Task ExecuteSqlAsync(string sql, IEnumerable<object> @params)
+        {
+            return _dbContext.Database.ExecuteSqlRawAsync(sql, @params);
+        }
+
         #endregion
 
         #region sql query
 
         public IEnumerable<T> QuerySql<T>(string sql)
         {
-            return QuerySql<T>(sql, null, TimeSpan.FromMinutes(5));
+            return QuerySql<T>(sql, null);
         }
 
         public IAsyncEnumerable<T> QuerySqlAsync<T>(string sql)
         {
-            return QuerySqlAsync<T>(sql, null, TimeSpan.FromMinutes(5));
+            return QuerySqlAsync<T>(sql, null);
         }
 
-        public IEnumerable<T> QuerySql<T>(string sql, TimeSpan timeout)
-        {
-            return QuerySql<T>(sql, null, timeout);
-        }
-
-        public IAsyncEnumerable<T> QuerySqlAsync<T>(string sql, TimeSpan timeout)
-        {
-            return QuerySqlAsync<T>(sql, null, timeout);
-        }
-
+        // ReSharper disable once MemberCanBePrivate.Global
         public IEnumerable<T> QuerySql<T>(string sql, object @params)
         {
             return QuerySql<T>(sql, @params, TimeSpan.FromMinutes(5));
@@ -249,111 +244,13 @@ namespace Caya.Framework.EntityFramework
             return QuerySqlAsync<T>(sql, @params, TimeSpan.FromMinutes(5));
         }
 
-        public IEnumerable<T> QuerySql<T>(string sql, object @params, TimeSpan timeout)
-        {
-            using var connection = _dbContext.Database.GetDbConnection();
-            connection.Open();
-            var command = connection.CreateCommand();
-            var seconds = Convert.ToInt32(timeout.TotalSeconds);
-            command.CommandTimeout = seconds;
-            if (@params != null)
-            {
-                var propertyArray = @params.GetType().GetProperties();
-                var parameters = new List<SqlParameter>();
-                foreach (var propertyInfo in propertyArray)
-                {
-                    var value = propertyInfo.GetValue(@params);
-                    var propertyName = propertyInfo.Name;
-                    var sb = new StringBuilder();
-                    if (typeof(IEnumerable).IsAssignableFrom(propertyInfo.PropertyType))
-                    {
-                        sb.Append("(");
-                        var array = (IEnumerable)value ?? Array.Empty<object>();
-                        var index = 0;
-                        foreach (var item in array)
-                        {
-                            var parameterName = $"@{propertyName}_{index++}";
-                            sb.Append(parameterName);
-                            sb.Append(',');
-                            parameters.Add(new SqlParameter(parameterName, item));
-                        }
-                        sb.Remove(sb.Length - 1, 1);
-                        sb.Append(")");
-                        sql = sql.Replace($"@{propertyName}", sb.ToString());
-                    }
-                    else
-                    {
-                        parameters.Add(new SqlParameter($"@{propertyInfo.Name}", value));
-                    }
-                }
-                command.Parameters.AddRange(parameters.ToArray());
-            }
-            command.CommandText = sql;
-            using var reader = command.ExecuteReader();
-            var dict = new Dictionary<string, object>();
-            while (reader.Read())
-            {
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    dict[reader.GetName(i)] = reader[i];
-                }
-                yield return FastDataReaderRowConvert.Convert<T>(dict);
-            }
-        }
+        public abstract IEnumerable<T> QuerySql<T>(string sql, object @params, TimeSpan timeout);
 
-        public async IAsyncEnumerable<T> QuerySqlAsync<T>(string sql, object @params, TimeSpan timeout)
-        {
-            await using var connection = _dbContext.Database.GetDbConnection();
-            await connection.OpenAsync();
-            var command = connection.CreateCommand();
-            var seconds = Convert.ToInt32(timeout.TotalSeconds);
-            command.CommandTimeout = seconds;
-            if (@params != null)
-            {
-                var propertyArray = @params.GetType().GetProperties();
-                var parameters = new List<SqlParameter>();
-                foreach (var propertyInfo in propertyArray)
-                {
-                    var value = propertyInfo.GetValue(@params);
-                    var propertyName = propertyInfo.Name;
-                    var sb = new StringBuilder();
-                    if (typeof(IEnumerable).IsAssignableFrom(propertyInfo.PropertyType))
-                    {
-                        sb.Append("(");
-                        var array = (IEnumerable)value ?? Array.Empty<object>();
-                        var index = 0;
-                        foreach (var item in array)
-                        {
-                            var parameterName = $"@{propertyName}_{index++}";
-                            sb.Append(parameterName);
-                            sb.Append(',');
-                            parameters.Add(new SqlParameter(parameterName, item));
-                        }
-                        sb.Remove(sb.Length - 1, 1);
-                        sb.Append(")");
-                        sql = sql.Replace($"@{propertyName}", sb.ToString());
-                    }
-                    else
-                    {
-                        parameters.Add(new SqlParameter($"@{propertyInfo.Name}", value));
-                    }
-                }
-                command.Parameters.AddRange(parameters.ToArray());
-            }
-            command.CommandText = sql;
-            await using var reader = await command.ExecuteReaderAsync();
-            var dict = new Dictionary<string, object>();
-            while (await reader.ReadAsync())
-            {
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    dict[reader.GetName(i)] = reader[i];
-                }
-                yield return FastDataReaderRowConvert.Convert<T>(dict);
-            }
-        }
+        public abstract IAsyncEnumerable<T> QuerySqlAsync<T>(string sql, object @params, TimeSpan timeout);
 
         #endregion
+
+        public abstract SqlMapper.GridReader QueryMultiple(string sql, object @params = null, IDbTransaction transaction = null, int? millionSeconds = null, CommandType? type = null);
 
         public int SaveChanges()
         {

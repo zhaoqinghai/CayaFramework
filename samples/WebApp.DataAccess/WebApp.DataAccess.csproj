@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Caya.Framework.Dapper\Caya.Framework.Dapper.csproj" />
-    <ProjectReference Include="..\..\Caya.Framework.EntityFramework\Caya.Framework.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\Caya.Framework.EntityFramework.Npgsql\Caya.Framework.EntityFramework.Npgsql.csproj" />
     <ProjectReference Include="..\WebApp.DataAccessInterface\WebApp.DataAccessInterface.csproj" />
     <ProjectReference Include="..\WebApp.Entity\WebApp.Entity.csproj" />
   </ItemGroup>

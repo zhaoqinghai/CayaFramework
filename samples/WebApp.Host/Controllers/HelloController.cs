@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Caya.Framework.Caching;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WebApp.BusinessData;
@@ -23,7 +22,7 @@ namespace WebApp.Host.Controllers
         //    return new JsonResult(_service.SayHello());
         //}
 
-        public ActionResult SayHello([FromServices] IRedisCacheProvider cacheProvider, [FromServices] IHelloService service, [FromQuery] HelloModel model)
+        public ActionResult SayHello([FromServices] IHelloService service)
         {
             return new JsonResult(service.SayHello());
         }

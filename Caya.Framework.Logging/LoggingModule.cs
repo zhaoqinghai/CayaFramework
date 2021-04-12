@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Serilog.Sinks.Kafka;
+using Microsoft.Extensions.Configuration;
 
 namespace Caya.Framework.Logging
 {
@@ -23,6 +24,8 @@ namespace Caya.Framework.Logging
     public class LoggingModule : ILifeTimeModule
     {
         public int Order => 0;
+
+        public IConfiguration Configuration { get ; set; }
 
         public void OnConfigureAppLifetime(IHostApplicationLifetime applicationLifetime)
         {

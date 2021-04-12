@@ -12,5 +12,7 @@ namespace Caya.Framework.Configuration
             var config = services.BuildServiceProvider().GetService<IConfiguration>();
             services.Configure<AppConfigOption>(config.GetSection("CayaConfig"));
         }
+
+        public IConfiguration Configuration { get; set; }
     }
 }

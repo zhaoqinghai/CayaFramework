@@ -24,8 +24,7 @@ namespace Caya.Framework.EntityFramework
             _loggerFactory = loggerFactory;
         }
 
-
-        public void Detach()
+        private void Detach()
         {
             ChangeTracker.Entries().ToList().ForEach(aEntry =>
             {
@@ -56,7 +55,7 @@ namespace Caya.Framework.EntityFramework
             OnCayaConfiguring(optionsBuilder);
         }
 
-        protected void OnCayaConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected virtual void OnCayaConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         }

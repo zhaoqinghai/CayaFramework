@@ -12,6 +12,6 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Mapster" Version="7.0.0" />
+    <PackageReference Include="Mapster" Version="7.1.5" />
   </ItemGroup>
 </Project>

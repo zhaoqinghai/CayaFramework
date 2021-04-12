@@ -23,7 +23,7 @@ namespace WebApp.Host
             Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webHostBuilder =>
             {
-                webHostBuilder.ConfigureServices(services => services.AddModules()).Configure(app => app.UseModules());
+                webHostBuilder.ConfigureServices((context, services) => services.AddModules(context.Configuration)).Configure(app => app.UseModules());
             });
     }
 }
