@@ -29,6 +29,7 @@ namespace WebApp.DataAccess
                 Age = 22,
                 Id = Guid.NewGuid()
             });
+            await repo.SaveChangesAsync();
         }
         public string SayHello()
         {

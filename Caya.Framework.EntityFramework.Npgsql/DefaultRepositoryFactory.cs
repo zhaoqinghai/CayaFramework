@@ -41,9 +41,9 @@ namespace Caya.Framework.EntityFramework.Npgsql
                 Expression newExpression = Expression.New(typeof(TDbContext).GetTypeInfo().GetConstructor(new [] { typeof(DbContextOptions), typeof(ILoggerFactory) })!, optionsParameter, loggerFactoryParameter);
                 return Expression.Lambda<Func<DbContextOptions, ILoggerFactory, object>>(newExpression, optionsParameter, loggerFactoryParameter).Compile();
             });
-            var writeOptions = _options.GetWriteDbOption<TDbContext>();
-            var writeOption = writeOptions[new Random().Next(writeOptions.Count)];
-            var option = _dict.ContainsKey(typeof(TDbContext)) ? new DbContextOptionsBuilder().UseNpgsql(writeOption.ConnectionStr, _dict[typeof(TDbContext)]).AddInterceptors(new ReadWriteDbInterceptor()).Options : new DbContextOptionsBuilder().UseNpgsql(writeOption.ConnectionStr).AddInterceptors(new ReadWriteDbInterceptor()).Options;
+            var readOptions = _options.GetReadDbOption<TDbContext>();
+            var readOption = readOptions[new Random().Next(readOptions.Count)];
+            var option = _dict.ContainsKey(typeof(TDbContext)) ? new DbContextOptionsBuilder().UseNpgsql(readOption.ConnectionStr, _dict[typeof(TDbContext)]).AddInterceptors(new ReadWriteDbInterceptor()).Options : new DbContextOptionsBuilder().UseNpgsql(readOption.ConnectionStr).AddInterceptors(new ReadWriteDbInterceptor()).Options;
             return new NpgsqlCayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(option, _loggerFactory));
         }
     }

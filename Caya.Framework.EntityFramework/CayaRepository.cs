@@ -14,7 +14,7 @@ using Dapper;
 
 namespace Caya.Framework.EntityFramework
 {
-    public abstract class CayaRepository<TDbContext> : IDisposable where TDbContext : CayaDbContext
+    public abstract class CayaRepository<TDbContext> : IDisposable, IAsyncDisposable where TDbContext : CayaDbContext
     {
         protected CayaRepository(TDbContext dbContext) => (_dbContext, _options) = (dbContext, RepositoryOptions.Default);
 
@@ -265,6 +265,17 @@ namespace Caya.Framework.EntityFramework
         public void Dispose()
         {
             _dbContext.SaveChanges();
+            _dbContext?.Dispose();
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            return new ValueTask(DoAsyncDispose());
+        }
+
+        private async Task DoAsyncDispose()
+        {
+            await _dbContext.SaveChangesAsync();
             _dbContext?.Dispose();
         }
     }

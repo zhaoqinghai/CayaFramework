@@ -60,6 +60,11 @@ namespace Caya.Framework.EntityFramework
             return new CayaRepository<TDbContext>((TDbContext)reflectorFunc.Invoke(option, _loggerFactory));
         }
 
+        public CayaRepository<TDbContext> CreateRepo<TDbContext>() where TDbContext : CayaDbContext
+        {
+            throw new NotImplementedException();
+        }
+
         internal DefaultRepositoryFactory(RepositoryOptions options, ILoggerFactory loggerFactory)
         {
             _dict = options.GetDbOptionDict();

@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DefaultRepositoryFactory.cs" />
     <Compile Remove="Extensions.cs" />
   </ItemGroup>
 
